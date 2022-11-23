@@ -1,0 +1,172 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Invoices</strong></h1>
+
+					<div class="row">
+						<div class="card">
+							<div class="card-body"> 
+									<div class="row">
+										<div class="col-4 mb-3">
+											<label class="form-label">Customer</label>
+											<select class="form-select form-select-lg" id="customer">
+												<option value="0" selected>All Cus</option>
+												{% for customer in customers %}
+												<option value="{{customer.id}}">{{customer.name}}</option> 
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-4 mb-3">
+											<label class="form-label">Delivery Status</label>
+											<select class="form-select form-select-lg" id="delivery_status">
+												<option value="-1" selected>All</option>
+												<option value="1">Delivered</option>
+												<option value="0">Pending</option> 
+											</select>
+										</div>
+										<div class="col-4 mb-3">
+											<label class="form-label">Payment Status</label>
+											<select class="form-select form-select-lg" id="payment_status">
+												<option value="-1" selected>All</option>
+												<option value="1">Paid</option>
+												<option value="0">Pending</option> 
+											</select>
+										</div>
+									</div> 
+									<div class="row">
+										<div class="col-6 mb-3">
+											<label class="form-label">Start Date</label>
+											<input class="form-control form-control-lg" id="startdate" type="date" name="startdate" placeholder="Enter your username" />
+										</div>
+										<div class="col-6 mb-3">
+											<label class="form-label">End Date</label>
+											<input class="form-control form-control-lg" id="enddate" type="date" name="enddate" placeholder="Enter your password" />
+										</div> 
+									</div> 
+									<div class="text-center mt-3">
+										<button class="btn btn-lg btn-primary" id="generate">Generate</button>
+									</div> 
+							</div>
+						</div>
+ 					</div> 
+
+					<div class="row" id="table">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill p-3">
+								<!-- <div class="card-header">
+
+									<h5 class="card-title mb-0">Latest Projects</h5>
+								</div> -->
+								<table class="table table-hover my-0" id="tableData">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Date</th>
+											<th>Customer</th>
+											<th>Items</th>
+											<th>Total</th> 
+											<th>Del. Status</th> 
+											<th>Pay. Status</th> 
+										</tr>
+									</thead>
+									<tbody id="tableBody"> 
+									</tbody>
+								</table>
+								 
+							</div>
+						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>  
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseInventory").collapse();
+			$("#table").hide();
+			$("#generate").click(function(){
+				customer = $("#customer").val();
+				delivery_status = $("#delivery_status").val();
+				payment_status = $("#payment_status").val();
+				startdate = $("#startdate").val();
+				enddate = $("#enddate").val();
+
+				gettable(customer,delivery_status,payment_status,startdate,enddate);
+			});
+		})
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'invoices.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'invoices.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function gettable(customer,delivery_status,payment_status,startdate,enddate){
+			$.ajax({
+			url:"api/invoice_data",
+			type:"GET", 
+			data:{	customer : customer,
+					delivery_status : delivery_status,
+					payment_status : payment_status,
+					startdate : startdate,
+					enddate : enddate 
+				  },
+			success: function(response){ 
+				rows = ''; 
+				response.data.forEach(addRow);
+                function addRow(item){
+                    rows += "<tr>";
+					rows += "<td>#000"+item.id+"</td>";
+					rows += "<td>"+item.date+"</td>";
+					rows += "<td>"+item.customer__name+"</td>";
+					rows += "<td>"+item.products_count+"</td>";
+					rows += "<td>"+item.total+"</td>";
+					if(item.delivery_status == 1){
+						rows += "<td><span class='badge bg-success'>Delivered</span></td>";
+					}else if(item.delivery_status == 0){
+						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
+					}
+					if(item.payment_status == 1){
+						rows += "<td><span class='badge bg-success'>Paid</span></td>";
+					}else if(item.payment_status == 0){
+						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
+					}
+                }
+				$('#tableBody').html(rows);
+				$('#tableData').DataTable();
+				$("#table").show();
+			}
+		});
+		}
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+	</script>
+{% endblock %}

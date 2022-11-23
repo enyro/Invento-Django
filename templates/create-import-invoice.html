@@ -1,0 +1,191 @@
+
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+<main class="d-flex w-100">
+	<div class="container d-flex flex-column">
+		<div class="row vh-100">
+			<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+				<div class="d-table-cell align-middle">
+
+					<div class="text-center mt-4">
+						<h1 class="h2">Import Invoice</h1>
+						<p class="lead">
+							<!-- Start creating the best possible user experience for you customers. -->
+						</p>
+					</div>
+
+					<div class="card">
+						<div class="card-body">
+							<div class="m-sm-4">
+								<!-- <form method="POST">  -->
+									<div class="row">
+										<div class="col-md-12"> 
+											<div class="alert alert-danger" id="formVaildation">
+												<strong></strong> 
+											</div>   
+										</div>
+									</div>
+									<div class="mb-3 row">
+										<div class="col-md-6"></div>
+										<div class="col-md-6">
+											<label class="form-label">Date</label> 
+											<input class="form-control form-control-lg" id="date" type="date" name="date" required />
+										</div> 
+									</div>
+									<div class="mb-3">
+										<label class="form-label">Supplier</label>
+										<select class="form-control form-control-lg" name="supplier" id="supplier">
+											 {% for supplier in suppliers %}
+											 	<option value="{{supplier.id}}">{{supplier.name}}</option>
+											 {% endfor %}
+										</select>
+									</div> 
+									<div class="form-group">
+										<label for="form-label">Invoice Image</label>
+										<input type="file" class="form-control form-control-lg form-control-file" id="image" accept="image/*">
+									</div>
+									<div class="text-center m-4">
+										<h1 class="h4">Items</h1>
+										<div style="text-align: right;" class="mb-2">
+											<button type="button" class="btn btn-sm btn-success" onclick="addItem()">
+												Add Item
+											</button>
+										</div>
+									</div>
+									<div id="items">
+										<div class="mb-3 row">
+											<div class="col-6">
+												<label class="form-label">Product</label>
+												<select class="form-control form-control-lg product" name="product1" id="product1">
+													<option value="0">Select Product</option>
+													{% for product in products %}
+														<option value="{{product.id}}">{{product.name}} - {{product.available_qty}} kg</option>
+													{% endfor %}
+												</select>
+											</div>
+											<div class="col-3">
+												<label class="form-label">Qty</label> 
+												<input class="form-control form-control-lg" type="number" name="qty" id="product1Qty" />
+											</div>
+											<div class="col-3">
+												<label class="form-label">Unit Price</label> 
+												<input class="form-control form-control-lg" type="number" name="price" id="product1Price" />
+											</div>
+										</div>
+									</div>
+									<div class="text-center mt-3"> 
+										<button class="btn btn-primary w-100" onclick="createInvoice()" id="submitInvoice">Create Invoice</button> 
+									</div> 
+								<!-- </form> -->
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</main> 
+<script>
+	$('#formVaildation').hide();
+	var items = 1;
+	var totalItems = 0;
+	var options = '<option value="0">Select Product</option>';
+	{% for product in products %}
+		totalItems +=1;
+		options +=	'<option value="{{product.id}}">{{product.name}} - {{product.available_qty}} kg</option>';
+	{% endfor %}
+	$('.product').change(updateOptions)
+	function addItem(){
+		if(totalItems > items){
+			items += 1;
+			row = '';
+			row +='<div class="mb-3 row">';
+			row +='<div class="col-6">';
+			row +='<label class="form-label">Product</label>';
+			row +='<select class="form-control form-control-lg product" name="product'+items+'" id="product'+items+'">'; 
+			row += options; 
+			row +='</select>';
+			row +='</div>';
+			row +='<div class="col-3">';
+			row +='<label class="form-label">Qty</label>';
+			row +='<input class="form-control form-control-lg" type="number" name="qty" id="product'+items+'Qty" />';
+			row +='</div>';
+			row +='<div class="col-3">';
+			row +='<label class="form-label">Unit Price</label>'; 
+			row +='<input class="form-control form-control-lg" type="number" name="price" id="product'+items+'Price" />';
+			row +='</div>';
+			row +='</div>';
+
+			$( "#items" ).append(row);
+			updateOptions();
+		}
+	}
+	function updateOptions(){
+		itemsVal = []; 
+		for (let i = 0; i < items; i++) {
+			let id = '#product'+(i+1);
+			itemsVal[i] = $(id).val(); 
+		} 
+		$('.product').html(options); 
+		for(let i = 0; i < items; i++){ 
+			let id = '#product'+(i+1); 
+			$(id).val(itemsVal[i]);
+			itemsVal.forEach(element => {   
+				if(itemsVal[i] != element && element != 0){   
+					ele = id + " option[value='"+element+"']"; 
+					$(ele).remove();
+				} 
+			});
+		} 
+		$('.product').change(updateOptions)
+	}
+	function createInvoice(){
+		var fd = new FormData();
+		var date = $('#date').val();
+		var supplier = $('#supplier').val();
+		var itemsArray = [];
+		var itemCount = 0;
+		var totalPrice = 0;
+		var image = $('#image')[0].files[0];;
+		for(let i = 0; i < items; i++){
+			let id = '#product'+(i+1); 
+			let idQty = '#product'+(i+1)+'Qty'; 
+			let idPrice = '#product'+(i+1)+'Price'; 
+			let item = $(id).val();
+			let itemQty = $(idQty).val();
+			let itemPrice = $(idPrice).val();
+			if (item != 0 && itemQty != '' && itemPrice != ''){
+				let itemObj = {id:item,qty:itemQty,price:itemPrice};
+				itemCount += 1;
+				itemTotal = itemQty*itemPrice;
+				totalPrice += itemTotal;
+				itemsArray.push(itemObj);
+			}
+		}
+
+		fd.append('date',date); 
+		fd.append('supplier',supplier); 
+		fd.append('count',itemCount); 
+		fd.append('total',totalPrice); 
+		fd.append('items',JSON.stringify(itemsArray)); 
+		fd.append('image',image); 
+		$.ajax({
+			url:"api/insert-import-invoice",
+			type:"POST",
+			headers:{
+				"X-CSRFToken":'{{csrf_token}}'
+			},
+			mode:"same-origin",
+			data:fd,
+			contentType: false,
+			dataType: "json",
+			processData: false,
+			success:function(response){  
+				window.location = response.url;
+			}
+		})
+	}
+</script>
+{% endblock %}

@@ -1,0 +1,222 @@
+
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+<main class="d-flex w-100">
+	<div class="container d-flex flex-column">
+		<div class="row vh-100">
+			<div class="col-sm-10 col-md-8 col-lg-6 mx-auto d-table h-100">
+				<div class="d-table-cell align-middle">
+
+					<div class="text-center mt-4">
+						<h1 class="h2">Create Employee</h1>
+						<p class="lead">
+							<!-- Start creating the best possible user experience for you customers. -->
+						</p>
+					</div>
+
+					<div class="card">
+						<div class="card-body">
+							<div class="m-sm-4"> 
+									<div class="mb-3">
+										<label class="form-label">Employee Name</label>
+										<input class="form-control form-control-lg" type="text" name="name" id="name" placeholder="Enter Employee Full Name" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">NIC</label>
+										<input class="form-control form-control-lg" type="text" name="nic" id="nic" placeholder="Enter NIC Number" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Date of Birth</label>
+										<input class="form-control form-control-lg" type="text" name="dob" id="dob" placeholder="Enter Date of Birth" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Gender</label>
+										<input class="form-control form-control-lg" type="text" name="gender" id="gender" placeholder="Enter Employee Gender" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Maritial  Status</label>
+										<input class="form-control form-control-lg" type="text" name="status" id="status" placeholder="Enter Employee Status" />
+									</div> 
+									<div class="form-group">
+										<label for="form-label">Employee Image</label>
+										<input type="file" class="form-control form-control-lg form-control-file" id="image" accept="image/*">
+									</div>
+
+									<div class="text-center m-4">
+										<h1 class="h4">Contact Details</h1>  
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Address</label>
+										<input class="form-control form-control-lg" type="text" name="address" id="address" placeholder="Enter Employee Address" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Mobile Number</label>
+										<input class="form-control form-control-lg" type="text" name="mobile" id="mobile" placeholder="Enter Mobile Number" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Telephone Number</label>
+										<input class="form-control form-control-lg" type="text" name="telephone" id="telephone" placeholder="Enter Telephone Number" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Email</label>
+										<input class="form-control form-control-lg" type="text" name="email" id="email" placeholder="Enter Employee Email" />
+									</div> 
+                                    <div class="text-center m-4">
+										<h1 class="h4">Bank Details (To remit the salary)</h1>  
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Bank Name</label>
+										<input class="form-control form-control-lg" type="text" name="bank" id="bank" placeholder="Enter Bank Name" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Branch</label>
+										<input class="form-control form-control-lg" type="text" name="branch" id="branch" placeholder="Enter Branch Name" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Account Number</label>
+										<input class="form-control form-control-lg" type="text" name="account" id="account" placeholder="Enter Account Number" />
+									</div> 
+
+                                    <div class="text-center m-4">
+										<h1 class="h4">Payroll Information</h1>  
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">EPF Number</label>
+										<input class="form-control form-control-lg" type="text" name="epf" id="epf" placeholder="Enter EPF Number" />
+									</div> 
+                                    <div class="mb-3">
+										<label class="form-label">Date of Appointment</label>
+										<input class="form-control form-control-lg" type="text" name="appointmentDate" id="appointmentDate" placeholder="Enter Date of Appointment" />
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Job Title</label>
+										<input class="form-control form-control-lg" type="text" name="job" id="job" placeholder="Enter Job Title" />
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Basic Salary</label>
+										<input class="form-control form-control-lg" type="text" name="basicSalary" id="basicSalary" placeholder="Enter Basic Salary" />
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Allowances</label>
+										<input class="form-control form-control-lg" type="text" name="allowance" id="allowance" placeholder="Enter Allowance" />
+									</div>
+                                    <div class="mb-3">
+										<label class="form-label">Reason for Allowances</label>
+										<input class="form-control form-control-lg" type="text" name="allowanceReason" id="allowanceReason" placeholder="Enter Allowance Reason" />
+									</div>
+                                    <div class="text-center mt-3"> 
+										<button class="btn btn-primary w-100" onclick="createInvoice()" id="submitInvoice">Create Invoice</button> 
+									</div> 
+								<!-- </form> -->
+							</div>
+						</div>
+					</div>
+
+				</div>
+			</div>
+		</div>
+	</div>
+</main> 
+<script>
+	$('#formVaildation').hide();
+	var items = 1;
+	var totalItems = 0;
+	var options = '<option value="0">Select Product</option>';
+	{% for product in products %}
+		totalItems +=1;
+		options +=	'<option value="{{product.id}}">{{product.name}} - {{product.available_qty}} kg</option>';
+	{% endfor %}
+	$('.product').change(updateOptions)
+	function addItem(){
+		if(totalItems > items){
+			items += 1;
+			row = '';
+			row +='<div class="mb-3 row">';
+			row +='<div class="col-6">';
+			row +='<label class="form-label">Product</label>';
+			row +='<select class="form-control form-control-lg product" name="product'+items+'" id="product'+items+'">'; 
+			row += options; 
+			row +='</select>';
+			row +='</div>';
+			row +='<div class="col-3">';
+			row +='<label class="form-label">Qty</label>';
+			row +='<input class="form-control form-control-lg" type="number" name="qty" id="product'+items+'Qty" />';
+			row +='</div>';
+			row +='<div class="col-3">';
+			row +='<label class="form-label">Unit Price</label>'; 
+			row +='<input class="form-control form-control-lg" type="number" name="price" id="product'+items+'Price" />';
+			row +='</div>';
+			row +='</div>';
+
+			$( "#items" ).append(row);
+			updateOptions();
+		}
+	}
+	function updateOptions(){
+		itemsVal = []; 
+		for (let i = 0; i < items; i++) {
+			let id = '#product'+(i+1);
+			itemsVal[i] = $(id).val(); 
+		} 
+		$('.product').html(options); 
+		for(let i = 0; i < items; i++){ 
+			let id = '#product'+(i+1); 
+			$(id).val(itemsVal[i]);
+			itemsVal.forEach(element => {   
+				if(itemsVal[i] != element && element != 0){   
+					ele = id + " option[value='"+element+"']"; 
+					$(ele).remove();
+				} 
+			});
+		} 
+		$('.product').change(updateOptions)
+	}
+	function createInvoice(){
+		var fd = new FormData();
+		var date = $('#date').val();
+		var supplier = $('#supplier').val();
+		var itemsArray = [];
+		var itemCount = 0;
+		var totalPrice = 0;
+		var image = $('#image')[0].files[0];;
+		for(let i = 0; i < items; i++){
+			let id = '#product'+(i+1); 
+			let idQty = '#product'+(i+1)+'Qty'; 
+			let idPrice = '#product'+(i+1)+'Price'; 
+			let item = $(id).val();
+			let itemQty = $(idQty).val();
+			let itemPrice = $(idPrice).val();
+			if (item != 0 && itemQty != '' && itemPrice != ''){
+				let itemObj = {id:item,qty:itemQty,price:itemPrice};
+				itemCount += 1;
+				itemTotal = itemQty*itemPrice;
+				totalPrice += itemTotal;
+				itemsArray.push(itemObj);
+			}
+		}
+
+		fd.append('date',date); 
+		fd.append('supplier',supplier); 
+		fd.append('count',itemCount); 
+		fd.append('total',totalPrice); 
+		fd.append('items',JSON.stringify(itemsArray)); 
+		fd.append('image',image); 
+		$.ajax({
+			url:"api/insert-import-invoice",
+			type:"POST",
+			headers:{
+				"X-CSRFToken":'{{csrf_token}}'
+			},
+			mode:"same-origin",
+			data:fd,
+			contentType: false,
+			dataType: "json",
+			processData: false,
+			success:function(response){  
+				window.location = response.url;
+			}
+		})
+	}
+</script>
+{% endblock %}

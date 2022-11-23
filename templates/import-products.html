@@ -1,0 +1,178 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Import Products</strong></h1>
+
+					<div class="row">
+						<div class="card">
+							<div class="card-body"> 
+									<div class="row">
+										<div class="col-6 mb-3">
+											<label class="form-label">Supplier</label>
+											<select class="form-select form-select-lg" id="supplier">
+												<option value="0" selected>All Suppliers</option>
+												{% for supplier in suppliers %}
+												<option value="{{supplier.id}}">{{supplier.name}}</option> 
+												{% endfor %}
+											</select>
+										</div>
+										<div class="col-6 mb-3">
+											<label class="form-label">Product</label>
+											<select class="form-select form-select-lg" id="product">
+												<option value="0" selected>All Products</option>
+												{% for product in products %}
+												<option value="{{product.id}}">{{product.name}}</option> 
+												{% endfor %}
+											</select>
+										</div>
+									</div> 
+									<div class="row">
+										<div class="col-6 mb-3">
+											<label class="form-label">Load Status</label>
+											<select class="form-select form-select-lg" id="load_status">
+												<option value="-1" selected>All</option>
+												<option value="0">Pending Shippment</option>
+												<option value="1">Shipped</option> 
+												<option value="2">Arrived</option>
+												<option value="3">Received</option> 
+											</select>
+										</div>
+										<div class="col-6 mb-3">
+											<label class="form-label">Payment Status</label>
+											<select class="form-select form-select-lg" id="payment_status">
+												<option value="-1" selected>All</option>
+												<option value="1">Paid</option>
+												<option value="0">Pending</option> 
+											</select>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-6 mb-3">
+											<label class="form-label">Start Date</label>
+											<input class="form-control form-control-lg" id="startdate" type="date" name="startdate" placeholder="Enter your username" />
+										</div>
+										<div class="col-6 mb-3">
+											<label class="form-label">End Date</label>
+											<input class="form-control form-control-lg" id="enddate" type="date" name="enddate" placeholder="Enter your password" />
+										</div> 
+									</div> 
+									<div class="text-center mt-3">
+										<button class="btn btn-lg btn-primary" id="generate">Generate</button>
+									</div> 
+							</div>
+						</div>
+ 					</div> 
+
+					<div class="row" id="table">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill p-3">
+								<!-- <div class="card-header">
+
+									<h5 class="card-title mb-0">Latest Projects</h5>
+								</div> -->
+								<table class="table table-hover my-0" id="tableData">
+									<thead>
+										<tr>
+											<th>Invoice Id</th>
+											<th>Date</th> 
+											<th>Supplier</th>
+											<th>Item</th>
+											<th>Quantity</th>
+											<th>Unit Price</th> 
+											<th>Total</th> 
+											<th>Load Status</th> 
+											<th>Pay. Status</th> 
+										</tr>
+									</thead>
+									<tbody id="tableBody"> 
+									</tbody>
+								</table>
+							</div>
+						</div> 
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>  
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseImports").collapse();
+			$("#table").hide();
+			$("#generate").click(function(){
+				supplier = $("#supplier").val();
+				load_status = $("#load_status").val();
+				payment_status = $("#payment_status").val();
+				startdate = $("#startdate").val();
+				enddate = $("#enddate").val();
+
+				gettable(supplier,load_status,payment_status,startdate,enddate);
+			});
+		})
+		function gettable(supplier,load_status,payment_status,startdate,enddate){
+			$.ajax({
+			url:"api/import_invoice_products_data",
+			type:"GET", 
+			data:{	supplier : supplier,
+					load_status : load_status,
+					payment_status : payment_status,
+					startdate : startdate,
+					enddate : enddate 
+				  },
+			success: function(response){ 
+				rows = ''; 
+				response.data.forEach(addRow);
+                function addRow(item){
+                    rows += "<tr>";
+					rows += "<td>#000"+item.invoice__id+"</td>";
+					rows += "<td>"+item.invoice__date+"</td>"; 
+					rows += "<td>"+item.invoice__supplier__name+"</td>";
+					rows += "<td>"+item.product__name+"</td>";
+					rows += "<td>"+item.weight+"</td>";
+					rows += "<td>"+item.unit_price+"</td>";
+					rows += "<td>"+item.total+"</td>";
+					if(item.invoice__load_status == 1){
+						rows += "<td><span class='badge bg-success'>Delivered</span></td>";
+					}else if(item.invoice__load_status == 0){
+						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
+					}
+					if(item.invoice__payment_status == 1){
+						rows += "<td><span class='badge bg-success'>Paid</span></td>";
+					}else if(item.invoice__payment_status == 0){
+						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
+					}
+                }
+				$('#tableBody').html(rows);
+				$('#tableData').DataTable();
+				$("#table").show();
+			}
+		});
+		}
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+	</script>
+{% endblock %}

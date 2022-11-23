@@ -1,0 +1,112 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Employees</strong></h1>
+
+					<div class="row">
+						<div class="card">
+							<div class="card-body">
+								<form method="POST">
+									{% csrf_token %}
+									<div class="row">
+										<div class="col-12 mb-3">
+											<label class="form-label">Job Role</label>
+											<select class="form-select form-select-lg">
+												<option selected>All Roles</option>
+												<option>Role 1</option>
+												<option>Role 2</option>
+												<option>Role 3</option>
+											</select>
+										</div> 
+									</div>  
+									<div class="text-center mt-3">
+										<button type="submit" class="btn btn-lg btn-primary">Generate</button>
+									</div>
+								</form>
+							</div>
+						</div>
+ 					</div> 
+
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill">
+								<!-- <div class="card-header">
+
+									<h5 class="card-title mb-0">Latest Projects</h5>
+								</div> -->
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Name</th>
+											<th>Job Role</th>
+											<th>Nic</th>
+											<th>EPF</th> 
+											<th>Telephone</th> 
+											<th>Address</th> 
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td>Name 1</td>
+											<td>Role 1</td>
+											<td>935015879V</td> 
+											<td>030</td> 
+											<td>0778545896</td> 
+											<td>Address 1</td> 
+										</tr>
+										<tr>
+											<td>1</td>
+											<td>Name 1</td>
+											<td>Role 1</td>
+											<td>935015879V</td> 
+											<td>030</td> 
+											<td>0778545896</td> 
+											<td>Address 1</td> 
+										</tr>
+										<tr>
+											<td>1</td>
+											<td>Name 1</td>
+											<td>Role 1</td>
+											<td>935015879V</td> 
+											<td>030</td> 
+											<td>0778545896</td> 
+											<td>Address 1</td>  
+										</tr>
+										<tr>
+											<td>1</td>
+											<td>Name 1</td>
+											<td>Role 1</td>
+											<td>935015879V</td> 
+											<td>030</td> 
+											<td>0778545896</td> 
+											<td>Address 1</td> 
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div> 
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>  
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseEmployees").collapse()
+		})
+	</script>
+{% endblock %}

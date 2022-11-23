@@ -1,0 +1,119 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Users</strong></h1>
+					<div style="text-align: right;" class="mb-2">
+						<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+							Create New User
+						</button> -->
+						<a href="create-user" class="btn btn-primary">Create New User</a>
+					</div>
+ 
+					<div class="row">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill">
+								<!-- <div class="card-header">
+
+									<h5 class="card-title mb-0">Latest Projects</h5>
+								</div> -->
+								<table class="table table-hover my-0">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Username</th>
+											<th>Email</th> 
+											<th>Name</th> 
+											<th>Role</th> 
+										</tr>
+									</thead>
+									<tbody>
+										{% for user in users %}
+										<tr>
+											<td>{{user.id}}</td>
+											<td>{{user.username}}</td>
+											<td>{{user.email}}</td> 
+											<td>{{user.first_name}} {{user.last_name}}</td>  
+											<td>{{user.user_role.role.role}}</td> 
+										</tr> 
+										{% endfor %}
+									</tbody>
+								</table>
+							</div>
+						</div> 
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>
+	<!-- Modal -->
+	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Create New Customer</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<!-- <form method="POST">
+						{% csrf_token %}
+						<div class="row">
+							<div class="col-md-12">
+								{% if form.errors %}
+									{% for field in form %}
+										{% for error in field.errors %}
+											<div class="alert alert-danger">
+												<strong>{{ error|escape }}</strong>
+												<strong>{{ field|escape }}</strong>
+											</div>
+										{% endfor %}
+									{% endfor %}
+									{% for error in form.non_field_errors %}
+										<div class="alert alert-danger">
+											<strong>{{ error|escape }}</strong>
+										</div>
+									{% endfor %}
+								{% endif %}
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Name</label>
+							{{form.name}} 
+						</div>   
+						<div class="mb-3">
+							<label class="form-label">Address</label>
+							{{form.address}} 
+						</div> 
+						<div class="mb-3">
+							<label class="form-label">Telephone</label>
+							{{form.telephone}} 
+						</div> 
+						<div class="text-center mt-3"> 
+							<button class="btn btn-primary w-100" type="submit" >Create Customer</button> 
+						</div> 
+					</form> -->
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<!-- <button type="button" class="btn btn-primary">Upload Product</button> -->
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseAdmin").collapse()
+		})
+	</script>
+{% endblock %}

@@ -1,0 +1,159 @@
+<nav id="sidebar" class="sidebar js-sidebar">
+    <div class="sidebar-content js-simplebar">
+        <a class="sidebar-brand" href="/">
+            <span class="align-middle">Invento</span>
+        </a>
+
+        <ul class="sidebar-nav">
+            <!-- <li class="sidebar-header">
+                Pages
+            </li> -->
+
+            <li class="sidebar-item {% if nbar == 'dashboard' %}active{% endif %}">
+                <a class="sidebar-link" href="/">
+                    <!-- <i class="align-middle" data-feather="sliders"></i>  -->
+                    <span class="align-middle">Dashboard</span>
+                </a>
+            </li> 
+            <!-- <div class="dropdown sidebar-item ">
+                <button class="sidebar-link dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                  Inventory
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                  <li><a class="sidebar-link" href="#">Action</a></li>
+                  <li><a class="sidebar-link" href="#">Another action</a></li>
+                  <li><a class="sidebar-link" href="#">Something else here</a></li>
+                </ul>
+            </div> -->
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory">
+                    <!-- <i class="align-middle" data-feather="sliders"></i>  -->
+                    <span class="align-middle ">Inventory</span>
+                </a>
+            </li>
+            <div class="collapse" id="collapseInventory"> 
+                <li class="sidebar-item {% if nbar == 'create-invoice' %}active{% endif %}">
+                    <a class="sidebar-link" href="/create-invoice">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Create Invoice</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'invoices' %}active{% endif %}">
+                    <a class="sidebar-link" href="/invoices">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Invoices</span>
+                    </a>
+                </li> 
+                <li class="sidebar-item {% if nbar == 'products' %}active{% endif %}">
+                    <a class="sidebar-link" href="/products">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Products</span>
+                    </a>
+                </li>
+            </div>  
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseImports" aria-expanded="false" aria-controls="collapseImports">
+                    <!-- <i class="align-middle" data-feather="sliders"></i>  -->
+                    <span class="align-middle ">Imports</span>
+                </a>
+            </li>
+            <div class="collapse" id="collapseImports">   
+                <li class="sidebar-item {% if nbar == 'add-import-invoice' %}active{% endif %}">
+                    <a class="sidebar-link" href="/add-import-invoice">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Add Import Invoice</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'imports' %}active{% endif %}">
+                    <a class="sidebar-link" href="/imports">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Invoices</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'import-products' %}active{% endif %}">
+                    <a class="sidebar-link" href="/import-products">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Invoice Products</span>
+                    </a>
+                </li>
+            </div>  
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseSuppliers" aria-expanded="false" aria-controls="collapseSuppliers">
+                    <!-- <i class="align-middle" data-feather="log-in"></i>  -->
+                    <span class="align-middle">Suppliers</span>
+                </a>
+            </li>
+            <div class="collapse" id="collapseSuppliers"> 
+                <li class="sidebar-item {% if nbar == 'suppliers' %}active{% endif %}">
+                    <a class="sidebar-link" href="/suppliers">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Suppliers</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'suppliers-payments' %}active{% endif %}">
+                    <a class="sidebar-link" href="/suppliers-payments">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Suppliers Payments</span>
+                    </a>
+                </li>
+            </div>  
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseCustomers" aria-expanded="false" aria-controls="collapseCustomers">
+                    <!-- <i class="align-middle" data-feather="user-plus"></i>  -->
+                    <span class="align-middle">Customers</span>
+                </a>
+            </li>
+            <div class="collapse" id="collapseCustomers"> 
+                <li class="sidebar-item {% if nbar == 'customers' %}active{% endif %}">
+                    <a class="sidebar-link" href="/customers">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Customers</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'customers-payments' %}active{% endif %}">
+                    <a class="sidebar-link" href="/customers-payments">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Customer Payments</span>
+                    </a>
+                </li>
+            </div>  
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseEmployees" aria-expanded="false" aria-controls="collapseEmployees">
+                    <!-- <i class="align-middle" data-feather="book"></i>  -->
+                    <span class="align-middle">Employees</span>
+                </a>
+            </li>   
+            <div class="collapse" id="collapseEmployees"> 
+                <li class="sidebar-item {% if nbar == 'employees' %}active{% endif %}">
+                    <a class="sidebar-link" href="/employees">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Employees</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'customers-payments' %}active{% endif %}">
+                    <a class="sidebar-link" href="/employees-salaries">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Employees Salaries</span>
+                    </a>
+                </li>
+            </div>  
+            
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseAdmin" aria-expanded="false" aria-controls="collapseAdmin">
+                    <!-- <i class="align-middle" data-feather="book"></i>  -->
+                    <span class="align-middle">Admin</span>
+                </a>
+            </li>   
+            <div class="collapse" id="collapseAdmin"> 
+                <li class="sidebar-item {% if nbar == 'users' %}active{% endif %}">
+                    <a class="sidebar-link" href="/users">
+                        <!-- <i class="align-middle" data-feather="user"></i>  -->
+                        <span class="align-middle ms-3">Users</span>
+                    </a>
+                </li> 
+            </div>  
+        </ul> 
+    </div>
+</nav>
