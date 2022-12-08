@@ -92,43 +92,47 @@
 					</div>
 					<div class="row">
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
-							<div class="card flex-fill">
-								<!-- <div class="card-header">
-
-									<h5 class="card-title mb-0">Latest Projects</h5>
-								</div> -->
-								<table class="table table-hover my-0">
-									<thead>
-										<tr>
-											<th>Id</th>
-											<th>Name</th>
-											<th>Available Qty</th>
-											<th>Pending Qty</th>
-											<th>Status</th> 
-										</tr>
-									</thead>
-									<tbody>
-										{% for product in products %}
-										<tr>
-											<td>{{product.id}}</td>
-											<td>{{product.name}}</td>
-											<td>{{product.available_qty}} kg</td>
-											<td>{{product.pending_qty}} kg</td>
-											{% if product.status == 1 %}
-											<td><span class="badge bg-success">Active</span></td> 
-											{% endif %}
-											{% if product.status == 0 %}
-											<td><span class="badge bg-danger">In-Active</span></td> 
-											{% endif %}
-											{% if product.status == 2 %}
-											<td><span class="badge bg-warning">Freezed</span></td> 
-											{% endif %}
-										</tr> 
-										{% endfor %}
-									</tbody>
-								</table>
+							<div class="card flex-fill"> 
+								<div class="table-responsive">
+									<table class="table table-hover my-0" id="tableData">
+										<thead>
+											<tr>
+												<th>Id</th>
+												<th>Name</th>
+												<th>Available Qty</th>
+												<th>Pending Qty</th>
+												<th>Status</th> 
+											</tr>
+										</thead>
+										<tbody>
+											{% for product in products %}
+											<tr>
+												<td>{{product.id}}</td>
+												<td>{{product.name}}</td>
+												<td>{{product.available_qty}} kg</td>
+												<td>{{product.pending_qty}} kg</td>
+												{% if product.status == 1 %}
+												<td><span class="badge bg-success">Active</span></td> 
+												{% endif %}
+												{% if product.status == 0 %}
+												<td><span class="badge bg-danger">In-Active</span></td> 
+												{% endif %}
+												{% if product.status == 2 %}
+												<td><span class="badge bg-warning">Freezed</span></td> 
+												{% endif %}
+											</tr> 
+											{% endfor %}
+										</tbody>
+									</table>
+								</div>
 							</div>
 						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i
+									class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i
+									class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
 					</div>
 
 				</div>
@@ -188,5 +192,11 @@
 		$(document).ready(function(){ 
 			$("#collapseInventory").collapse()
 		})
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'products.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'products.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
 	</script>
 {% endblock %}

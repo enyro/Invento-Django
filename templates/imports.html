@@ -63,11 +63,8 @@
 
 					<div class="row" id="table">
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
-							<div class="card flex-fill p-3">
-								<!-- <div class="card-header">
-
-									<h5 class="card-title mb-0">Latest Projects</h5>
-								</div> -->
+							<div class="card flex-fill p-3"> 
+								<div class="table-responsive">
 								<table class="table table-hover my-0" id="tableData">
 									<thead>
 										<tr>
@@ -83,8 +80,13 @@
 									<tbody id="tableBody"> 
 									</tbody>
 								</table>
+								</div>
 							</div>
 						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
 					</div>
 
 				</div>
@@ -109,7 +111,7 @@
 		})
 		function gettable(supplier,load_status,payment_status,startdate,enddate){
 			$.ajax({
-			url:"api/import_invoice_data",
+			url:"api/v1/import_invoice_data",
 			type:"GET", 
 			data:{	supplier : supplier,
 					load_status : load_status,
@@ -158,6 +160,12 @@
 				}
 			}
 			return cookieValue;
+		}
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'imports.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'imports.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
 		}
 	</script>
 {% endblock %}

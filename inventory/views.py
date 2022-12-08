@@ -112,7 +112,7 @@ def insert_invoice(request):
                 total = total
             ) 
             invoice_product_data.save()
-        return HttpResponse(items)
+        return JsonResponse({'id': 200, 'data': invoice_data.id})
 
 def invoice_details(request, id):
     invoice_data = invoice.objects.get(id=id)

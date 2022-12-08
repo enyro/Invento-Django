@@ -159,7 +159,7 @@
 			}
 		}
 		$.ajax({
-			url:"api/insert-invoice",
+			url:"api/v1/insert-invoice",
 			type:"POST",
 			headers:{
 				"X-CSRFToken":'{{csrf_token}}'
@@ -174,7 +174,9 @@
 			},
 			dataType: "json",
 			success:function(response){
-
+				if(response.id == 200){
+					window.location.replace("/invoice/"+response.data)
+				}
 			}
 		})
 	}

@@ -61,11 +61,7 @@
 
 					<div class="row" id="table">
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
-							<div class="card flex-fill p-3">
-								<!-- <div class="card-header">
-
-									<h5 class="card-title mb-0">Latest Projects</h5>
-								</div> -->
+							<div class="card flex-fill p-3"> 
 								<div class="table-responsive">
 								<table class="table table-hover my-0" id="tableData">
 									<thead>
@@ -119,7 +115,7 @@
 		}
 		function gettable(customer,delivery_status,payment_status,startdate,enddate){
 			$.ajax({
-			url:"api/invoice_data",
+			url:"api/v1/invoice_data",
 			type:"GET", 
 			data:{	customer : customer,
 					delivery_status : delivery_status,

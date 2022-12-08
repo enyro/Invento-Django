@@ -172,7 +172,7 @@
 		fd.append('items',JSON.stringify(itemsArray)); 
 		fd.append('image',image); 
 		$.ajax({
-			url:"api/insert-import-invoice",
+			url:"api/v1/insert-import-invoice",
 			type:"POST",
 			headers:{
 				"X-CSRFToken":'{{csrf_token}}'
