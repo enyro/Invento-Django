@@ -12,20 +12,36 @@
 
 					<h1 class="h3 mb-3"><strong>Users</strong></h1>
 					<div style="text-align: right;" class="mb-2">
-						<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
 							Create New User
-						</button> -->
-						<a href="create-user" class="btn btn-primary">Create New User</a>
+						</button> 
+					</div>
+					<div class="row">
+						<div class="card">
+							<div class="card-body">
+								<div class="row"> 
+									<div class="col-12 mb-3"> 
+											<label class="form-label">Role</label>
+											<select class="form-control form-control-lg" name="role" id="roleFilter">
+												<option value="0">All Roles</option>
+												{% for role in roles %}
+												<option value="{{role.id}}">{{role.role}}</option>
+												{% endfor %}
+											</select> 
+									</div> 
+								</div> 
+								<div class="text-center mt-3">
+									<button class="btn btn-lg btn-primary" onclick="getUsers()">Generate</button>
+								</div>
+							</div>
+						</div>
 					</div>
  
-					<div class="row">
+					<div class="row" id="table">
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
-							<div class="card flex-fill">
-								<!-- <div class="card-header">
-
-									<h5 class="card-title mb-0">Latest Projects</h5>
-								</div> -->
-								<table class="table table-hover my-0">
+							<div class="card flex-fill p-3"> 
+								<div class="table-responsive">
+								<table class="table table-hover my-0" id="tableData">
 									<thead>
 										<tr>
 											<th>Id</th>
@@ -35,20 +51,16 @@
 											<th>Role</th> 
 										</tr>
 									</thead>
-									<tbody>
-										{% for user in users %}
-										<tr>
-											<td>{{user.id}}</td>
-											<td>{{user.username}}</td>
-											<td>{{user.email}}</td> 
-											<td>{{user.first_name}} {{user.last_name}}</td>  
-											<td>{{user.user_role.role.role}}</td> 
-										</tr> 
-										{% endfor %}
+									<tbody id="tableBody"> 
 									</tbody>
 								</table>
+								</div>
 							</div>
 						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
 					</div>
 
 				</div>
@@ -56,64 +68,162 @@
 
 			{% include 'includes/footer.html' %}
 		</div>
-	</div>
-	<!-- Modal -->
+	</div> 
 	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="staticBackdropLabel">Create New Customer</h5>
+					<h5 class="modal-title" id="staticBackdropLabel">Create New User</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body">
-					<!-- <form method="POST">
-						{% csrf_token %}
+				<div class="modal-body" >  
 						<div class="row">
-							<div class="col-md-12">
-								{% if form.errors %}
-									{% for field in form %}
-										{% for error in field.errors %}
-											<div class="alert alert-danger">
-												<strong>{{ error|escape }}</strong>
-												<strong>{{ field|escape }}</strong>
-											</div>
-										{% endfor %}
-									{% endfor %}
-									{% for error in form.non_field_errors %}
-										<div class="alert alert-danger">
-											<strong>{{ error|escape }}</strong>
-										</div>
-									{% endfor %}
-								{% endif %}
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alert-danger"> 
+								</div>  
+								<div class="alert alert-success" id="alert-success">
+								</div>
 							</div>
 						</div>
 						<div class="mb-3">
-							<label class="form-label">Name</label>
-							{{form.name}} 
-						</div>   
+							<label class="form-label">Username</label> 
+							<input class="form-control form-control-lg" type="text" name="username" id="username" placeholder="Enter username" />
+						</div>
 						<div class="mb-3">
-							<label class="form-label">Address</label>
-							{{form.address}} 
-						</div> 
+							<label class="form-label">First Name</label> 
+							<input class="form-control form-control-lg" type="text" name="fname" id="fname" placeholder="Enter first name" />
+						</div>
 						<div class="mb-3">
-							<label class="form-label">Telephone</label>
-							{{form.telephone}} 
-						</div> 
+							<label class="form-label">Last Name</label> 
+							<input class="form-control form-control-lg" type="text" name="lname" id="lname" placeholder="Enter last name" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Role</label>
+							<select class="form-control form-control-lg" name="role" id="role">
+								{% for role in roles %}
+								<option value="{{role.id}}">{{role.role}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Email</label> 
+							<input class="form-control form-control-lg" type="email" name="email" id="email" placeholder="Enter email" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Passowrd</label> 
+							<input class="form-control form-control-lg" type="password" name="password" id="password" placeholder="Enter password" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Re-enter Password</label> 
+							<input class="form-control form-control-lg" type="password" name="re-password" id="re-password" placeholder="Re-enter password" />
+						</div>
 						<div class="text-center mt-3"> 
-							<button class="btn btn-primary w-100" type="submit" >Create Customer</button> 
+							<button class="btn btn-primary w-100" onclick="createUser()">Create User</button> 
 						</div> 
-					</form> -->
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-					<!-- <button type="button" class="btn btn-primary">Upload Product</button> -->
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
 				</div>
 			</div>
 		</div>
 	</div>
 	<script>
 		$(document).ready(function(){ 
-			$("#collapseAdmin").collapse()
+			$("#collapseAdmin").collapse();
+			$("#alert-danger").hide();
+			$("#alert-success").hide(); 
+			$("#table").hide();
 		})
+		function getUsers(){
+			$("#table").hide();
+			role = $("#roleFilter").val() ?? 0;
+			console.log(role)
+			$.ajax({
+				url: "api/v1/users",
+				type: "GET", 
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data:{
+					role:role
+				},
+				mode: "same-origin",
+				success: function (response) {
+					rows = '';
+					response.data.forEach(addRow);
+					function addRow(item) { 
+						rows += "<tr>";
+							rows += "<td>#000" + item.id + "</td>";
+							rows += "<td>" + item.username + "</td>";
+							rows += "<td>" + item.email + "</td>";
+							rows += "<td>" + item.first_name + " " + item.last_name +  "</td>";
+							rows += "<td>" + item.user_role__role__role + "</td>"; 
+						rows += "</tr>";
+					}
+					$('#tableBody').html(rows);
+					$('#tableData').DataTable();
+					$("#table").show();
+				}
+			});
+		}
+		function createUser(){
+			$("#alert-danger").hide();
+			$("#alert-success").hide();
+			username = $("#username").val();
+			fname = $("#fname").val();
+			lname = $("#lname").val();
+			role = $("#role").val();
+			email = $("#email").val();
+			password = $("#password").val();
+			rePassword = $("#re-password").val();
+
+			if(username != "" && fname != "" && lname != "" && role != 0 && email != "" && password != "" && rePassword != ""){
+				if(password == rePassword){
+					$.ajax({
+						url: "api/v1/create-user",
+						type: "POST",
+						headers: {
+							"X-CSRFToken": '{{csrf_token}}'
+						},
+						data: {
+							username: username,
+							fname: fname,
+							lname: lname,
+							role: role,
+							email: email,
+							password: password 
+						},
+						dataType: "json",
+						success: function (response) {
+							console.log(response.data)
+							if (response.id == 200) {
+								$("#alert-success").html(response.data);
+								$('#alert-success').show();
+								getUsers()
+							} else {
+								$("#alert-danger").html(response.data);
+								$('#alert-danger').show();
+							}
+						},
+						error: function (response) {
+							console.log(response)
+						}
+					});
+				}else{
+					$("#alert-danger").html("Passwords does not match!!");
+					$('#alert-danger').show();
+				}
+			}else{
+				$("#alert-danger").html("Please enter all the required fields!!");
+				$('#alert-danger').show();
+			}
+			
+		}
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'users.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'users.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
 	</script>
 {% endblock %}
