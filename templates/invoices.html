@@ -53,7 +53,7 @@
 										</div> 
 									</div> 
 									<div class="text-center mt-3">
-										<button class="btn btn-lg btn-primary" id="generate">Generate</button>
+										<button class="btn btn-lg btn-primary" onclick=" gettable()">Generate</button>
 									</div> 
 							</div>
 						</div>
@@ -72,7 +72,7 @@
 											<th>Items</th>
 											<th>Total</th> 
 											<th>Del. Status</th> 
-											<th>Pay. Status</th> 
+											<th>Pay. Status</th>  
 										</tr>
 									</thead>
 									<tbody id="tableBody"> 
@@ -93,27 +93,94 @@
 			{% include 'includes/footer.html' %}
 		</div>
 	</div>  
+	<div class="modal fade" id="deliveryModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="deliveryModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deliveryModelLabel">Update Delivery Status</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">  
+					<div class="alert alert-danger mb-3" id="deliveryAlert" role="alert">
+					</div> 
+					<div class="alert alert-success mb-3" id="deliveryAlertSuccess" role="alert">
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Id</label> 
+						<input class="form-control form-control-lg" type="text" id="deliveryId"  disabled/>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Status</label>
+						<select class="form-select form-select-lg" id="deliveryStatus"> 
+							<option value="0">Pending</option> 
+							<option value="1">Delivered</option>
+						</select>
+					</div>
+					<div class="text-center mt-3">
+						<button class="btn btn-primary w-100" onclick="updateDeliveryStatus()">Update Delivery Status</button>
+					</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="paymentModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="paymentModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="paymentModelLabel">Add payment</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">  
+					<div class="alert alert-danger mb-3" id="deliveryAlert" role="alert">
+					</div> 
+					<div class="alert alert-success mb-3" id="deliveryAlertSuccess" role="alert">
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Id</label> 
+						<input class="form-control form-control-lg" type="text" id="deliveryId"  disabled/>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Status</label>
+						<select class="form-select form-select-lg" id="deliveryStatus"> 
+							<option value="0">Pending</option> 
+							<option value="1">Delivered</option>
+						</select>
+					</div>
+					<div class="text-center mt-3">
+						<button class="btn btn-primary w-100" onclick="updateDeliveryStatus()">Update Delivery Status</button>
+					</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		$(document).ready(function(){ 
 			$("#collapseInventory").collapse();
 			$("#table").hide();
-			$("#generate").click(function(){
-				customer = $("#customer").val();
-				delivery_status = $("#delivery_status").val();
-				payment_status = $("#payment_status").val();
-				startdate = $("#startdate").val();
-				enddate = $("#enddate").val();
-
-				gettable(customer,delivery_status,payment_status,startdate,enddate);
-			});
+			$("#deliveryAlert").hide(); 
+			$("#deliveryAlertSuccess").hide();
 		})
 		function exportExcel(){
-			$("#tableData").tableHTMLExport({type:'csv',filename:'invoices.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+			$("#tableData").tableHTMLExport({type:'csv',filename:'invoices.csv',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
 		function exportPDF(){
-			$("#tableData").tableHTMLExport({type:'pdf',filename:'invoices.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'invoices.pdf',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
-		function gettable(customer,delivery_status,payment_status,startdate,enddate){
+		function gettable(){
+			customer = $("#customer").val();
+			delivery_status = $("#delivery_status").val();
+			payment_status = $("#payment_status").val();
+			startdate = $("#startdate").val();
+			enddate = $("#enddate").val();
+
 			$.ajax({
 			url:"api/v1/invoice_data",
 			type:"GET", 
@@ -128,21 +195,24 @@
 				response.data.forEach(addRow);
                 function addRow(item){
                     rows += "<tr>";
-					rows += "<td>#000"+item.id+"</td>";
+					rows += "<td>"+item.id+"</td>";
 					rows += "<td>"+item.date+"</td>";
 					rows += "<td>"+item.customer__name+"</td>";
 					rows += "<td>"+item.products_count+"</td>";
 					rows += "<td>"+item.total+"</td>";
-					if(item.delivery_status == 1){
-						rows += "<td><span class='badge bg-success'>Delivered</span></td>";
-					}else if(item.delivery_status == 0){
-						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
+					if(item.delivery_status == 1){ 
+						rows +="<td><button type='button' onclick='setDeliveryModel("+ item.id +",1)' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#deliveryModel'>Delivered</button></td>";						
+					}else if(item.delivery_status == 0){ 
+						rows += "<td><button type='button' onclick='setDeliveryModel(" + item.id +",0)' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#deliveryModel'>Pending</button></td>";
+
 					}
-					if(item.payment_status == 1){
-						rows += "<td><span class='badge bg-success'>Paid</span></td>";
-					}else if(item.payment_status == 0){
-						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
-					}
+					if(item.payment_status == 1){ 
+						rows += "<td><button type='button' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#paymentModel'>Paid</button></td>";						
+
+					}else if(item.payment_status == 0){ 
+						rows += "<td><button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#paymentModel'>Pending</button></td>";	
+					} 
+					rows += "</tr>";
                 }
 				$('#tableBody').html(rows);
 				$('#tableData').DataTable();
@@ -164,6 +234,43 @@
 				}
 			}
 			return cookieValue;
+		}
+		function setDeliveryModel(id,status){
+			$("#deliveryAlert").hide();
+			$("#deliveryAlertSuccess").hide();
+			$("#deliveryId").val(id);
+			$("#deliveryStatus").val(status);
+		}
+
+		function updateDeliveryStatus(){
+			$("#deliveryAlert").hide();
+			$("#deliveryAlertSuccess").hide();
+
+			id = $("#deliveryId").val();
+			status = $("#deliveryStatus").val();
+			$.ajax({
+				url: "/api/v1/update-invoice-delivery",
+				type: "POST",
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data: {
+					id:id,
+					status:status
+				},
+				dataType: "json",
+				success:function(response){
+					if(response.id == 200){
+						$("#deliveryAlertSuccess").html(response.data);
+						$("#deliveryAlertSuccess").show();
+						gettable();
+					}
+				},
+				error:function(error){
+					$("#deliveryAlert").html("Something went wrong!!");
+					$("#deliveryAlert").show();
+				}
+			})
 		}
 	</script>
 {% endblock %}

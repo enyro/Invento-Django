@@ -117,7 +117,8 @@
 					load_status : load_status,
 					payment_status : payment_status,
 					startdate : startdate,
-					enddate : enddate 
+					enddate : enddate,
+					status:1 
 				  },
 			success: function(response){ 
 				rows = ''; 
@@ -139,6 +140,7 @@
 					}else if(item.payment_status == 0){
 						rows += "<td><span class='badge bg-danger'>Pending</span></td>";
 					}
+					rows += "</tr>";
                 }
 				$('#tableBody').html(rows);
 				$('#tableData').DataTable();

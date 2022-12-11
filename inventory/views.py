@@ -10,9 +10,6 @@ from django.core import serializers
 from customers.models import customer
 from suppliers.models import supplier
 
-
-# Create your views here.
-
 def products(request):
     if request.method == 'POST':
         form  = ProductForm(request.POST) 
@@ -42,18 +39,12 @@ def invoices(request):
     customers = customer.objects.all() 
     return render(request,'invoices.html',{'nbar': 'invoices','customers':customers}) 
 
-def invoice_data(request):
-    # invoices = invoice.objects.all() 
-    # post_list = serializers.serialize('json', invoices)
-    # return JsonResponse(post_list, safe=False)
+def invoice_data(request): 
     delivery_status = int(request.GET['delivery_status']) 
     payment_status = int(request.GET['payment_status']) 
     customer_id = int(request.GET['customer']) 
     startdate = request.GET['startdate']
-    enddate = request.GET['enddate']
-
-    # if(request.GET['customer'] > 0):
-    #     customerQuery = ''
+    enddate = request.GET['enddate'] 
     
     obj = invoice.objects.all().values('id','date','products_count','total','delivery_status','payment_status','customer__name')
     
@@ -124,13 +115,14 @@ def imports(request):
     return render(request, 'imports.html',{'nbar':'imports','suppliers':suppliers})
 
 def import_invoice_data(request):
-    load_status = int(request.GET['load_status']) 
+    load_status = int(request.GET['load_status'])
     payment_status = int(request.GET['payment_status']) 
     supplier_id = int(request.GET['supplier']) 
     startdate = request.GET['startdate']
     enddate = request.GET['enddate']
+    status = request.GET['status']
     
-    obj = import_invoice.objects.all().values('id','date','products_count','total','load_status','payment_status','supplier__name')
+    obj = import_invoice.objects.all().values('id','date','products_count','total','load_status','payment_status','invoice_image','supplier__name').filter(status=status)
     
     if load_status > -1 :
         obj = obj.filter(load_status=load_status)
@@ -147,6 +139,7 @@ def import_invoice_data(request):
 
     if enddate != '' :
         obj = obj.filter(date__lte=enddate)
+
 
     return JsonResponse({'data':list(obj)})
 
@@ -191,7 +184,7 @@ def add_import_invoice(request):
 def insert_import_invoice(request):
     if request.method == 'POST':
         date = request.POST['date']
-        supplier_id = request.POST['supplier']
+        supplier_id = request.POST['supplier'] 
         count = request.POST['count']
         total = request.POST['total']
         image = request.FILES['image']
@@ -200,9 +193,7 @@ def insert_import_invoice(request):
             date = date,
             supplier = supplier_data,
             products_count = count,
-            total = total,
-            load_status = 0,
-            payment_status = 0,
+            total = total, 
             invoice_image = image
         ) 
         invoice_data.save()
@@ -222,3 +213,16 @@ def insert_import_invoice(request):
             ) 
             invoice_product_data.save()
         return JsonResponse({'url':invoice_data.invoice_image.url}) 
+
+def update_invoice_delivery(request):
+    invoice_id = request.POST['id']
+    invoice_delivery_status = request.POST['status']
+
+    invoice_update = invoice.objects.get(id=invoice_id)
+    invoice_update.delivery_status = invoice_delivery_status
+    invoice_update.save()
+
+    return JsonResponse({'id':200 , 'data':"Delivery status updated successfully!!"})
+
+def pending_imports(request):
+    return render(request, 'pending-imports.html',{'nbar': 'pending-imports'})

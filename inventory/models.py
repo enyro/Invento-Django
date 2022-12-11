@@ -30,8 +30,9 @@ class import_invoice(models.Model):
     supplier = models.ForeignKey(supplier, on_delete=models.DO_NOTHING)
     products_count = models.IntegerField()
     total = models.IntegerField()
-    load_status = models.SmallIntegerField()
-    payment_status = models.SmallIntegerField()
+    load_status = models.SmallIntegerField(default=0)
+    payment_status = models.SmallIntegerField(default=0)
+    status = models.SmallIntegerField(default=0)
     invoice_image = models.ImageField(upload_to='static/img/invoices/',default='static/img/invoices/default.jpg')
 
 class import_product(models.Model):
