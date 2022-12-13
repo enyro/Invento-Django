@@ -1,6 +1,6 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from .models import customer
+from .models import Customer
 from .forms import CustomerForm
 # Create your views here.
 
@@ -9,7 +9,7 @@ def customers(request):
         form  = CustomerForm(request.POST) 
         if form.is_valid():
             cd = form.cleaned_data
-            pc = customer(
+            pc = Customer(
                 name = cd['name'],
                 address =  cd['address'],
                 telephone =  cd['telephone']
@@ -20,11 +20,11 @@ def customers(request):
         else:
             print('Form is not valid')
             messages.error(request, 'Error Processing Your Request') 
-            customers_data = customer.objects.order_by('id').all()
+            customers_data = Customer.objects.order_by('id').all()
             form = CustomerForm()
             return render(request, 'customers.html',{'nbar':'customers','customers':customers_data,'form':form})
 
     if request.method == 'GET':
-        customers_data = customer.objects.order_by('id').all()
+        customers_data = Customer.objects.order_by('id').all()
         form = CustomerForm()
         return render(request, 'customers.html',{'nbar':'customers','customers':customers_data,'form':form})

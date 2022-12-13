@@ -2,10 +2,10 @@ from django.db import models
 from django.contrib.auth.models import User
 
 # Create your models here.
-class role(models.Model):
+class Role(models.Model):
     role = models.CharField(max_length=50)
   
-class user_role(models.Model): 
+class UserRole(models.Model): 
     user = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True,)
-    role = models.ForeignKey(role, on_delete=models.DO_NOTHING)
+    role = models.ForeignKey(Role, on_delete=models.DO_NOTHING)
   

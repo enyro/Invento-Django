@@ -1,5 +1,5 @@
 from django.shortcuts import render,redirect
-from users.models import role, user_role 
+from users.models import Role, UserRole 
 from django.contrib.auth.models import User 
 from .forms import RegisterForm
 from django.contrib.auth import authenticate, login, logout
@@ -29,26 +29,26 @@ def signinApi(request):
     return JsonResponse({'id': 400, 'data': "Invalid username or password!"})
 
 def users(request): 
-    if request.user.is_authenticated and request.user.user_role.role.role == 'Admin':
-        roles = role.objects.order_by('id').all()
+    if request.user.is_authenticated and request.user.userrole.role.role == 'Admin':
+        roles = Role.objects.order_by('id').all()
         form = RegisterForm()
         return render(request, 'users.html', {'nbar': 'users', 'form': form, 'roles': roles})
     else:
         return redirect('home')
 
 def getUsers(request):
-    if request.user.is_authenticated and request.user.user_role.role.role == 'Admin':
+    if request.user.is_authenticated and request.user.userrole.role.role == 'Admin':
         roleId = request.GET['role']
         if roleId != '0':
-            roleFilter = role.objects.get(id=roleId)
-            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','user_role__role__role').filter(user_role__role=roleFilter)
+            roleFilter = Role.objects.get(id=roleId)
+            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','userrole__role__role').filter(userrole__role=roleFilter)
         else:
-            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','user_role__role__role')
+            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','userrole__role__role')
 
         return JsonResponse({'id': 200, 'data': list(users)})
 
 def create(request): 
-    if request.user.is_authenticated and request.user.user_role.role.role == 'Admin':
+    if request.user.is_authenticated and request.user.userrole.role.role == 'Admin':
         username = request.POST['username']
         fname = request.POST['fname']
         lname = request.POST['lname']
@@ -68,8 +68,8 @@ def create(request):
             create_user.save()
 
             if create_user.id is not None:
-                role_data = role.objects.get(id=roleId)
-                add_user_role = user_role(
+                role_data = Role.objects.get(id=roleId)
+                add_user_role = UserRole(
                     user=create_user,
                     role = role_data
                 )

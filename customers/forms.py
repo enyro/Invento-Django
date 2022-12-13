@@ -1,5 +1,5 @@
 from django import forms
-from .models import customer
+from .models import Customer
 
 class CustomerForm(forms.Form):
     name = forms.CharField(

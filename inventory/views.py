@@ -3,19 +3,19 @@ import json
 from django.shortcuts import HttpResponse, render, redirect
 from django.contrib import messages
 from django.db.models import Sum
-from .models import product,invoice,invoice_product,import_invoice,import_product
+from .models import Product,Invoice,InvoiceProduct,ImportInvoice,ImportProduct
 from .forms import ProductForm 
 from django.http import JsonResponse
 from django.core import serializers
-from customers.models import customer
-from suppliers.models import supplier
+from customers.models import Customer
+from suppliers.models import Supplier
 
 def products(request):
     if request.method == 'POST':
         form  = ProductForm(request.POST) 
         if form.is_valid():
             cd = form.cleaned_data
-            pc = product(
+            pc = Product(
                 name = cd['name'] 
             )
             pc.save() 
@@ -25,18 +25,18 @@ def products(request):
             print('Form is not valid')
             messages.error(request, 'Error Processing Your Request') 
             form  = ProductForm() 
-            products = product.objects.order_by('id').all()
+            products = Product.objects.order_by('id').all()
             count = products.count()
             return render(request,'products.html',{'nbar': 'products','products':products,'form': form,'count':count})
     if request.method == 'GET':
         form  = ProductForm() 
-        products = product.objects.order_by('id').all()
+        products = Product.objects.order_by('id').all()
         count = products.count()
         totals = products.aggregate(Sum('available_qty'),Sum('pending_qty'))
         return render(request,'products.html',{'nbar': 'products','products':products,'form': form,'count':count,'totals':totals}) 
 
 def invoices(request):
-    customers = customer.objects.all() 
+    customers = Customer.objects.all() 
     return render(request,'invoices.html',{'nbar': 'invoices','customers':customers}) 
 
 def invoice_data(request): 
@@ -46,7 +46,7 @@ def invoice_data(request):
     startdate = request.GET['startdate']
     enddate = request.GET['enddate'] 
     
-    obj = invoice.objects.all().values('id','date','products_count','total','delivery_status','payment_status','customer__name')
+    obj = Invoice.objects.all().values('id','date','products_count','total','delivery_status','payment_status','customer__name')
     
     if delivery_status > -1 :
         obj = obj.filter(delivery_status=delivery_status)
@@ -55,7 +55,7 @@ def invoice_data(request):
         obj = obj.filter(payment_status=payment_status)
 
     if customer_id > 0 :
-        customerr = customer.objects.get(id=customer_id)
+        customerr = Customer.objects.get(id=customer_id)
         obj = obj.filter(customer=customerr)
     
     if startdate != '' :
@@ -68,8 +68,8 @@ def invoice_data(request):
 
 def create_invoice(request):
     if request.method == 'GET': 
-        customers = customer.objects.all()
-        products = product.objects.order_by('id').all()  
+        customers = Customer.objects.all()
+        products = Product.objects.order_by('id').all()  
         return render(request,'create-invoice.html',{'nbar': 'create-invoice','customers':customers,'products':products}) 
 
 def insert_invoice(request):
@@ -78,8 +78,8 @@ def insert_invoice(request):
         customer_id = request.POST['customer']
         count = request.POST['count']
         total = request.POST['total']
-        customer_data = customer.objects.get(id=customer_id)
-        invoice_data = invoice(
+        customer_data = Customer.objects.get(id=customer_id)
+        invoice_data = Invoice(
             date = date,
             customer = customer_data,
             products_count = count,
@@ -94,8 +94,8 @@ def insert_invoice(request):
             qty = int(item['qty'])
             price = int(item['price'])
             total = qty*price
-            product_data = product.objects.get(id=product_id)
-            invoice_product_data = invoice_product(
+            product_data = Product.objects.get(id=product_id)
+            invoice_product_data = InvoiceProduct(
                 invoice = invoice_data,
                 product = product_data,
                 unit_price = price,
@@ -106,12 +106,12 @@ def insert_invoice(request):
         return JsonResponse({'id': 200, 'data': invoice_data.id})
 
 def invoice_details(request, id):
-    invoice_data = invoice.objects.get(id=id)
-    invoice_product_data = invoice_product.objects.all().filter(invoice=invoice_data)
+    invoice_data = Invoice.objects.get(id=id)
+    invoice_product_data = InvoiceProduct.objects.all().filter(invoice=invoice_data)
     return render(request,'invoice.html',{'invoice':invoice_data,'items':invoice_product_data})
 
 def imports(request):
-    suppliers = supplier.objects.all() 
+    suppliers = Supplier.objects.all() 
     return render(request, 'imports.html',{'nbar':'imports','suppliers':suppliers})
 
 def import_invoice_data(request):
@@ -122,7 +122,7 @@ def import_invoice_data(request):
     enddate = request.GET['enddate']
     status = request.GET['status']
     
-    obj = import_invoice.objects.all().values('id','date','products_count','total','load_status','payment_status','invoice_image','supplier__name').filter(status=status)
+    obj = ImportInvoice.objects.all().values('id','date','products_count','total','load_status','payment_status','invoice_image','supplier__name').filter(status=status)
     
     if load_status > -1 :
         obj = obj.filter(load_status=load_status)
@@ -131,7 +131,7 @@ def import_invoice_data(request):
         obj = obj.filter(payment_status=payment_status)
 
     if supplier_id > 0 :
-        supplierr = supplier.objects.get(id=supplier_id)
+        supplierr = Supplier.objects.get(id=supplier_id)
         obj = obj.filter(supplier=supplierr)
     
     if startdate != '' :
@@ -144,8 +144,8 @@ def import_invoice_data(request):
     return JsonResponse({'data':list(obj)})
 
 def import_products(request):
-    suppliers = supplier.objects.order_by('id').all() 
-    products = product.objects.order_by('id').all()
+    suppliers = Supplier.objects.order_by('id').all() 
+    products = Product.objects.order_by('id').all()
     return render(request, 'import-products.html',{'nbar':'import-products','suppliers':suppliers,'products':products})
 
 def import_invoice_products_data(request):
@@ -156,7 +156,7 @@ def import_invoice_products_data(request):
     enddate = request.GET['enddate']
     
     # obj = import_invoice.objects.all().values('id','date','products_count','total','load_status','payment_status','supplier__name')
-    obj = import_product.objects.all().values('invoice__id','invoice__date','product__name','unit_price','weight','total','invoice__supplier__name','invoice__load_status','invoice__payment_status')
+    obj = ImportProduct.objects.all().values('invoice__id','invoice__date','product__name','unit_price','weight','total','invoice__supplier__name','invoice__load_status','invoice__payment_status')
     # if load_status > -1 :
     #     obj = obj.filter(load_status=load_status)
 
@@ -177,8 +177,8 @@ def import_invoice_products_data(request):
 
 def add_import_invoice(request):
      if request.method == 'GET': 
-        suppliers = supplier.objects.all()
-        products = product.objects.order_by('id').all()  
+        suppliers = Supplier.objects.all()
+        products = Product.objects.order_by('id').all()  
         return render(request,'create-import-invoice.html',{'nbar': 'create-import-invoice','suppliers':suppliers,'products':products}) 
 
 def insert_import_invoice(request):
@@ -188,8 +188,8 @@ def insert_import_invoice(request):
         count = request.POST['count']
         total = request.POST['total']
         image = request.FILES['image']
-        supplier_data = supplier.objects.get(id=supplier_id)
-        invoice_data = import_invoice(
+        supplier_data = Supplier.objects.get(id=supplier_id)
+        invoice_data = ImportInvoice(
             date = date,
             supplier = supplier_data,
             products_count = count,
@@ -203,8 +203,8 @@ def insert_import_invoice(request):
             qty = int(item['qty'])
             price = int(item['price'])
             total = qty*price
-            product_data = product.objects.get(id=product_id)
-            invoice_product_data = import_product(
+            product_data = Product.objects.get(id=product_id)
+            invoice_product_data = ImportProduct(
                 invoice = invoice_data,
                 product = product_data,
                 unit_price = price,
@@ -218,7 +218,7 @@ def update_invoice_delivery(request):
     invoice_id = request.POST['id']
     invoice_delivery_status = request.POST['status']
 
-    invoice_update = invoice.objects.get(id=invoice_id)
+    invoice_update = Invoice.objects.get(id=invoice_id)
     invoice_update.delivery_status = invoice_delivery_status
     invoice_update.save()
 

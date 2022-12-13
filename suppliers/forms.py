@@ -1,5 +1,5 @@
 from django import forms
-from .models import supplier
+from .models import Supplier
 
 class SupplierForm(forms.Form):
     name = forms.CharField(
