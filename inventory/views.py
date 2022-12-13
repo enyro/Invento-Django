@@ -225,4 +225,4 @@ def update_invoice_delivery(request):
     return JsonResponse({'id':200 , 'data':"Delivery status updated successfully!!"})
 
 def pending_imports(request):
-    return render(request, 'pending-imports.html',{'nbar': 'pending-imports'})
+    return render(request, 'pending-imports.html',{'nbar': 'pending-import-invoice'})
