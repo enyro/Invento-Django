@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import  Customer as customer
-# Register your models here.
+
 class Customer(admin.ModelAdmin):
     list_display = ('id','name','address','telephone')
 

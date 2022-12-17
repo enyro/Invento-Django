@@ -123,7 +123,20 @@
                         <span class="align-middle ms-3">Users</span>
                     </a>
                 </li> 
-            </div>  
+            </div>
+            
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseUtility" aria-expanded="false" aria-controls="collapseAdmin"> 
+                    <span class="align-middle">Utilities</span>
+                </a>
+            </li>   
+            <div class="collapse" id="collapseUtility"> 
+                <li class="sidebar-item {% if nbar == 'utilities' %}active{% endif %}">
+                    <a class="sidebar-link" href="/utilities"> 
+                        <span class="align-middle ms-3">Utilities</span>
+                    </a>
+                </li> 
+            </div>
         </ul> 
     </div>
 </nav>

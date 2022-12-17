@@ -1,6 +1,4 @@
-from django.shortcuts import render
-
-# Create your views here.
+from django.shortcuts import render 
 
 def employees(request):
     return render(request,'employees.html',{'nbar':'employees'})

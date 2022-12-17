@@ -1,8 +1,7 @@
 from django.db import models
 from customers.models import Customer
 from suppliers.models import Supplier
-
-# Create your models here.
+ 
 class Product(models.Model):
     name = models.CharField(max_length=100)
     avg_price = models.DecimalField(decimal_places=2,default=0, max_digits=5)

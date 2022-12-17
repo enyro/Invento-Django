@@ -1,30 +1,23 @@
 from django.shortcuts import render,redirect
 from django.contrib import messages
-from .models import Customer
-from .forms import CustomerForm
-# Create your views here.
+from .models import Customer 
+from django.http import JsonResponse
 
-def customers(request):
-    if request.method == 'POST':
-        form  = CustomerForm(request.POST) 
-        if form.is_valid():
-            cd = form.cleaned_data
-            pc = Customer(
-                name = cd['name'],
-                address =  cd['address'],
-                telephone =  cd['telephone']
+def customers(request): 
+    if request.user.is_authenticated and request.user.userrole.role.role != 'Store Keeper':  
+        return render(request, 'customers.html',{'nbar':'customers'})
+
+def getCustomers(request):
+    if request.user.is_authenticated and request.user.userrole.role.role != 'Store Keeper':  
+        customers = Customer.objects.order_by('id').all().values('id', 'name','address','telephone')
+        return JsonResponse({'id': 200, 'data': list(customers)})
+
+def createCustomer(request):
+    if request.user.is_authenticated and request.user.userrole.role.role != 'Store Keeper':  
+        pc = Customer(
+                name = request.POST['name'],
+                address =  request.POST['address'],
+                telephone =  request.POST['telephone']
             )
-            pc.save() 
-            messages.success(request, 'Customer created : ' + cd['name'])
-            return redirect('customers')
-        else:
-            print('Form is not valid')
-            messages.error(request, 'Error Processing Your Request') 
-            customers_data = Customer.objects.order_by('id').all()
-            form = CustomerForm()
-            return render(request, 'customers.html',{'nbar':'customers','customers':customers_data,'form':form})
-
-    if request.method == 'GET':
-        customers_data = Customer.objects.order_by('id').all()
-        form = CustomerForm()
-        return render(request, 'customers.html',{'nbar':'customers','customers':customers_data,'form':form})
+        pc.save() 
+        return JsonResponse({'id': 200, 'data':"Customer created successfully!"})

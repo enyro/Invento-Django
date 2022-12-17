@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Role as role,UserRole as user_role
-# Register your models here.
+ 
 class Role(admin.ModelAdmin):
     list_display = ('id','role')
 

@@ -1,6 +1,6 @@
 from django.contrib import admin
 from .models import Product as product, Invoice as invoice, InvoiceProduct as invoice_product, ImportInvoice as import_invoice, ImportProduct as import_product
-# Register your models here.
+
 class Product(admin.ModelAdmin):
     list_display = ('id','name','avg_price','available_qty','pending_qty','status')
 
