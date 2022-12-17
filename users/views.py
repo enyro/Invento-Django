@@ -1,7 +1,6 @@
 from django.shortcuts import render,redirect
 from users.models import Role, UserRole 
-from django.contrib.auth.models import User 
-from .forms import RegisterForm
+from django.contrib.auth.models import User  
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
 
@@ -30,9 +29,8 @@ def signinApi(request):
 
 def users(request): 
     if request.user.is_authenticated and request.user.userrole.role.role == 'Admin':
-        roles = Role.objects.order_by('id').all()
-        form = RegisterForm()
-        return render(request, 'users.html', {'nbar': 'users', 'form': form, 'roles': roles})
+        roles = Role.objects.order_by('id').all() 
+        return render(request, 'users.html', {'nbar': 'users', 'roles': roles})
     else:
         return redirect('home')
 

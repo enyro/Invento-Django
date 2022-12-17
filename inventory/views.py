@@ -3,37 +3,17 @@ import json
 from django.shortcuts import HttpResponse, render, redirect
 from django.contrib import messages
 from django.db.models import Sum
-from .models import Product,Invoice,InvoiceProduct,ImportInvoice,ImportProduct
-from .forms import ProductForm 
+from .models import Product,Invoice,InvoiceProduct,ImportInvoice,ImportProduct 
 from django.http import JsonResponse
 from django.core import serializers
 from customers.models import Customer
 from suppliers.models import Supplier
 
-def products(request):
-    if request.method == 'POST':
-        form  = ProductForm(request.POST) 
-        if form.is_valid():
-            cd = form.cleaned_data
-            pc = Product(
-                name = cd['name'] 
-            )
-            pc.save() 
-            messages.success(request, 'Product created : ' + cd['name'])
-            return redirect('products')
-        else:
-            print('Form is not valid')
-            messages.error(request, 'Error Processing Your Request') 
-            form  = ProductForm() 
-            products = Product.objects.order_by('id').all()
-            count = products.count()
-            return render(request,'products.html',{'nbar': 'products','products':products,'form': form,'count':count})
-    if request.method == 'GET':
-        form  = ProductForm() 
-        products = Product.objects.order_by('id').all()
-        count = products.count()
-        totals = products.aggregate(Sum('available_qty'),Sum('pending_qty'))
-        return render(request,'products.html',{'nbar': 'products','products':products,'form': form,'count':count,'totals':totals}) 
+def products(request):   
+    products = Product.objects.order_by('id').all()
+    count = products.count()
+    totals = products.aggregate(Sum('available_qty'),Sum('pending_qty'))
+    return render(request,'products.html',{'nbar': 'products','count':count,'totals':totals}) 
 
 def invoices(request):
     customers = Customer.objects.all() 
@@ -226,3 +206,14 @@ def update_invoice_delivery(request):
 
 def pending_imports(request):
     return render(request, 'pending-imports.html',{'nbar': 'pending-import-invoice'})
+
+def products_data(request):
+    obj = Product.objects.all().values('id','name','available_qty','pending_qty','status') 
+    return JsonResponse({'data':list(obj)})
+
+def insert_product(request): 
+    product = Product(
+        name = request.POST['name']
+    )
+    product.save()
+    return JsonResponse({'id':200 , 'data':"Product created successfully!!"})
