@@ -136,8 +136,8 @@
 		})
 		function getUsers(){
 			$("#table").hide();
-			role = $("#roleFilter").val() ?? 0;
-			console.log(role)
+			$('#tableData').DataTable().destroy();
+			role = $("#roleFilter").val() ?? 0; 
 			$.ajax({
 				url: "api/v1/users",
 				type: "GET", 

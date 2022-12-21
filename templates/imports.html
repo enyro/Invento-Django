@@ -110,6 +110,7 @@
 			});
 		})
 		function gettable(supplier,load_status,payment_status,startdate,enddate){
+			$('#tableData').DataTable().destroy();
 			$.ajax({
 			url:"api/v1/import_invoice_data",
 			type:"GET", 

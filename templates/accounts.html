@@ -1,0 +1,249 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Accounts</strong></h1>
+					<div style="text-align: right;" class="mb-2">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+							Add New Record
+						</button> 
+					</div>
+					<div class="row">
+						<div class="card">
+							<div class="card-body"> 
+								<div class="row">
+									<div class="col-6 mb-3">
+										<label class="form-label">Ledger</label>
+										<select class="form-select form-select-lg" id="ledger"> 
+											{% for ledger in ledgers %}
+											<option value="{{ledger.id}}">{{ledger.name}}</option> 
+											{% endfor %}
+										</select>
+									</div> 
+									<div class="col-6 mb-3">
+										<label class="form-label">Current/All</label>
+										<select class="form-select form-select-lg" id="records">
+											<option value="0" selected>Current</option>
+											<option value="1">All</option> 
+										</select>
+									</div> 
+								</div>  
+								<div class="text-center mt-3">
+									<button onclick="getAccounts()" class="btn btn-lg btn-primary">Generate</button>
+								</div> 
+							</div>
+						</div>
+ 					</div> 
+
+					<div class="row" id="table">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill p-3"> 
+								<div class="table-responsive">
+								<table class="table table-hover my-0" id="tableData">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Date</th>
+											<th>Description</th>
+											<th>Reference</th>
+											<th>Debit</th> 
+											<th>Credit</th>   
+										</tr>
+									</thead>
+									<tbody id="tableBody">
+										 
+									</tbody>
+								</table>
+								</div>
+							</div>
+						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>  
+	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Create New Record</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" >  
+						<div class="row">
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alert-danger"> 
+								</div>  
+								<div class="alert alert-success" id="alert-success">
+								</div>
+							</div>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Date</label> 
+							<input class="form-control form-control-lg" type="date" name="date" id="date" placeholder="Select Date" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Description</label> 
+							<input class="form-control form-control-lg" type="text" name="description" id="description" placeholder="Enter description" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Credit Ledger</label>
+							<select class="form-control form-control-lg" name="credit" id="credit">
+								{% for ledger in ledgers %}
+								<option value="{{ledger.id}}">{{ledger.name}}</option> 
+								{% endfor %}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Debit Ledger</label>
+							<select class="form-control form-control-lg" name="debit" id="debit">
+								{% for ledger in ledgers %}
+								<option value="{{ledger.id}}">{{ledger.name}}</option> 
+								{% endfor %}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Amount</label> 
+							<input class="form-control form-control-lg" type="number" name="amount" id="amount" placeholder="Enter amount" />
+						</div>
+						<div class="text-center mt-3"> 
+							<button class="btn btn-primary w-100" onclick="createAccount()">Create Record</button> 
+						</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseAccounts").collapse() 
+			$("#alert-danger").hide();
+			$("#alert-success").hide(); 
+			$("#table").hide();
+		})
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'employees.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'employees.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function getAccounts(){
+			$("#table").hide(); 
+			$('#tableData').DataTable().destroy();
+			ledger = $("#ledger").val() ?? 0 ;
+			records = $("#records").val() ?? 0;
+			$.ajax({
+				url: 'api/v1/accounts',
+				type: 'GET',
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data:{
+					ledger:ledger,
+					records:records
+				},
+				dataType:'json',
+				success: function(response){ 
+					rows = '';
+					response.data.debit.forEach(addDebit);
+					response.data.credit.forEach(addCredit);
+					function addDebit(item) { 
+						rows += "<tr>";
+							rows += "<td>" + item.id + "</td>";
+							rows += "<td>" + item.date + "</td>";
+							rows += "<td>" + item.description + "</td>";
+							rows += "<td>" + item.ledger_credit__name + "</td>";
+							rows += "<td>" + item.amount + "</td>";
+							rows += "<td></td>"; 
+						rows += "</tr>";
+					}
+					function addCredit(item) { 
+						rows += "<tr>";
+							rows += "<td>" + item.id + "</td>";
+							rows += "<td>" + item.date + "</td>";
+							rows += "<td>" + item.description + "</td>";
+							rows += "<td>" + item.ledger_debit__name + "</td>";
+							rows += "<td></td>";
+							rows += "<td>" + item.amount + "</td>"; 
+						rows += "</tr>";
+					}
+					$('#tableBody').html(rows);  
+					$('#tableData').DataTable({
+						order: [[0, 'asc']],
+					}); 
+					$("#table").show();
+				},
+				error: function(response){
+
+				}
+
+			})
+		}
+		function createAccount(){
+			$("#alert-danger").hide();
+			$("#alert-success").hide();
+			date = $("#date").val();
+			description = $("#description").val();
+			credit = $("#credit").val();
+			debit = $("#debit").val();
+			amount = $("#amount").val(); 
+
+			if(date != "" && description != "" && credit != 0 && debit != 0 && amount != ""){
+				if(credit != debit){
+					$.ajax({
+						url: "api/v1/create-account",
+						type: "POST",
+						headers: {
+							"X-CSRFToken": '{{csrf_token}}'
+						},
+						data: {
+							date: date,
+							description: description,
+							credit: credit,
+							debit: debit,
+							amount: amount 
+						},
+						dataType: "json",
+						success: function (response) { 
+							if (response.id == 200) {
+								$("#alert-success").html(response.data);
+								$('#alert-success').show();
+								getAccounts()
+							} else {
+								$("#alert-danger").html(response.data);
+								$('#alert-danger').show();
+							}
+						},
+						error: function (response) {
+							console.log(response)
+						}
+					});
+				}else{
+					$("#alert-danger").html("Credit and debit ledgers cannot be the same!!");
+					$('#alert-danger').show();
+				}
+			}else{
+				$("#alert-danger").html("Please enter all the required fields!!");
+				$('#alert-danger').show();
+			}
+			
+		}
+	</script>
+{% endblock %}

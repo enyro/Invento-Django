@@ -180,7 +180,7 @@
 			payment_status = $("#payment_status").val();
 			startdate = $("#startdate").val();
 			enddate = $("#enddate").val();
-
+			$('#tableData').DataTable().destroy();
 			$.ajax({
 			url:"api/v1/invoice_data",
 			type:"GET", 

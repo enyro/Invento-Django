@@ -14,31 +14,28 @@
 
 					<div class="row">
 						<div class="card">
-							<div class="card-body">
-								<form method="POST">
-									{% csrf_token %}
-									<div class="row">
-										<div class="col-12 mb-3">
-											<label class="form-label">Job Role</label>
-											<select class="form-select form-select-lg">
-												<option selected>All Roles</option>
-												<option>Role 1</option>
-												<option>Role 2</option>
-												<option>Role 3</option>
-											</select>
-										</div> 
-									</div>  
-									<div class="text-center mt-3">
-										<button type="submit" class="btn btn-lg btn-primary">Generate</button>
-									</div>
-								</form>
+							<div class="card-body"> 
+								<div class="row">
+									<div class="col-12 mb-3">
+										<label class="form-label">Job Role</label>
+										<select class="form-select form-select-lg" id="role">
+											<option value="0" selected>All Roles</option>
+											{% for role in roles %}
+											<option value="{{role.id}}">{{role.name}}</option> 
+											{% endfor %}
+										</select>
+									</div> 
+								</div>  
+								<div class="text-center mt-3">
+									<button class="btn btn-lg btn-primary" onclick="getEmployees()">Generate</button>
+								</div> 
 							</div>
 						</div>
  					</div> 
 
-					<div class="row">
+					<div class="row" id="table">
 						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
-							<div class="card flex-fill"> 
+							<div class="card flex-fill p-3"> 
 								<div class="table-responsive">
 								<table class="table table-hover my-0" id="tableData">
 									<thead>
@@ -52,43 +49,7 @@
 											<th>Address</th> 
 										</tr>
 									</thead>
-									<tbody>
-										<tr>
-											<td>1</td>
-											<td>Name 1</td>
-											<td>Role 1</td>
-											<td>935015879V</td> 
-											<td>030</td> 
-											<td>0778545896</td> 
-											<td>Address 1</td> 
-										</tr>
-										<tr>
-											<td>1</td>
-											<td>Name 1</td>
-											<td>Role 1</td>
-											<td>935015879V</td> 
-											<td>030</td> 
-											<td>0778545896</td> 
-											<td>Address 1</td> 
-										</tr>
-										<tr>
-											<td>1</td>
-											<td>Name 1</td>
-											<td>Role 1</td>
-											<td>935015879V</td> 
-											<td>030</td> 
-											<td>0778545896</td> 
-											<td>Address 1</td>  
-										</tr>
-										<tr>
-											<td>1</td>
-											<td>Name 1</td>
-											<td>Role 1</td>
-											<td>935015879V</td> 
-											<td>030</td> 
-											<td>0778545896</td> 
-											<td>Address 1</td> 
-										</tr>
+									<tbody id="tableBody"> 
 									</tbody>
 								</table>
 								</div>
@@ -109,7 +70,44 @@
 	<script>
 		$(document).ready(function(){ 
 			$("#collapseEmployees").collapse()
+			$("#table").hide();
 		})
+
+		function getEmployees(){
+			$("#table").hide(); 
+			$('#tableData').DataTable().destroy();
+			role = $("#role").val()
+			$.ajax({
+				url: "api/v1/employees",
+				type: "GET", 
+				data:{
+					role:role
+				},
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				}, 
+				mode: "same-origin",
+				success: function (response) {
+					rows = '';
+					
+					response.data.forEach(addRow);
+					function addRow(item) {  
+						rows += "<tr>";
+							rows += "<td>" + item.id + "</td>";
+							rows += "<td>" + item.name + "</td>";
+							rows += "<td>" + item.role__name + "</td>";
+							rows += "<td>" + item.nic + "</td>";
+							rows += "<td>" + item.epf_number + "</td>"; 
+							rows += "<td>" + item.telephone + "</td>";
+							rows += "<td>" + item.address + "</td>"; 
+						rows += "</tr>";
+					}
+					$('#tableBody').html(rows); 
+					$('#tableData').DataTable();
+					$("#table").show();
+				}
+			});
+		}
 		function exportExcel(){
 			$("#tableData").tableHTMLExport({type:'csv',filename:'employees.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
 		}

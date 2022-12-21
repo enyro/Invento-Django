@@ -158,6 +158,7 @@
 			$("#tableData").tableHTMLExport({type:'pdf',filename:'products.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
 		}
 		function getProducts(){
+			$('#tableData').DataTable().destroy();
 			$("#table").hide(); 
 			$.ajax({
 				url: "api/v1/products",

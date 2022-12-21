@@ -103,6 +103,7 @@
 		}
 		function getCustomers(){
 			$("#table").hide(); 
+			$('#tableData').DataTable().destroy();
 			$.ajax({
 				url: "api/v1/customers",
 				type: "GET", 

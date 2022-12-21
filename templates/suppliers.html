@@ -108,6 +108,7 @@
 		}
 		function getSuppliers(){
 			$("#table").hide(); 
+			$('#tableData').DataTable().destroy();
 			$.ajax({
 				url: "api/v1/suppliers",
 				type: "GET", 

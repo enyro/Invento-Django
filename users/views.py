@@ -3,6 +3,7 @@ from users.models import Role, UserRole
 from django.contrib.auth.models import User  
 from django.contrib.auth import authenticate, login, logout
 from django.http import JsonResponse
+from django.core.mail import send_mail
 
 def signin(request):
     if request.user.is_authenticated:
@@ -20,6 +21,13 @@ def signinApi(request):
     user = authenticate(username=username, password=password)
     if user is not None:
         if user.is_active:
+            # send_mail(
+            #     'Subject here',
+            #     'Here is the message.',
+            #     'from@example.com',
+            #     ['to@example.com'],
+            #     fail_silently=False,
+            # )
             login(request, user)
             return JsonResponse({'id': 200, 'data':"Signed in successfully!"})
 

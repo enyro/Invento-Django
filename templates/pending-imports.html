@@ -93,6 +93,7 @@
         gettable()
     })
     function gettable() {
+        $('#tableData').DataTable().destroy();
         $.ajax({
             url: "api/v1/import_invoice_data",
             type: "GET",
