@@ -111,14 +111,19 @@
                 </a>
             </li>   
             <div class="collapse" id="collapseEmployees"> 
-                <li class="sidebar-item {% if nbar == 'employees' %}active{% endif %}">
-                    <a class="sidebar-link" href="/employees"> 
-                        <span class="align-middle ms-3">Employees</span>
+                <li class="sidebar-item {% if nbar == 'employee-roles' %}active{% endif %}">
+                    <a class="sidebar-link" href="/employee-roles"> 
+                        <span class="align-middle ms-3">Roles</span>
                     </a>
                 </li>
-                <li class="sidebar-item {% if nbar == 'customers-payments' %}active{% endif %}">
-                    <a class="sidebar-link" href="/employees-salaries"> 
-                        <span class="align-middle ms-3">Employees Salaries</span>
+                <li class="sidebar-item {% if nbar == 'employees' %}active{% endif %}">
+                    <a class="sidebar-link" href="/employees"> 
+                        <span class="align-middle ms-3">Personal Info</span>
+                    </a>
+                </li>
+                <li class="sidebar-item {% if nbar == 'employees-payroll' %}active{% endif %}">
+                    <a class="sidebar-link" href="/employees-payroll"> 
+                        <span class="align-middle ms-3">Payroll Info</span>
                     </a>
                 </li>
             </div>  

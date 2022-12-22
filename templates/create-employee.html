@@ -9,10 +9,7 @@
 				<div class="d-table-cell align-middle">
 
 					<div class="text-center mt-4">
-						<h1 class="h2">Create Employee</h1>
-						<p class="lead">
-							<!-- Start creating the best possible user experience for you customers. -->
-						</p>
+						<h1 class="h2">Create Employee</h1> 
 					</div>
 
 					<div class="card">
@@ -28,11 +25,14 @@
 									</div> 
                                     <div class="mb-3">
 										<label class="form-label">Date of Birth</label>
-										<input class="form-control form-control-lg" type="text" name="dob" id="dob" placeholder="Enter Date of Birth" />
+										<input class="form-control form-control-lg" type="date" name="dob" id="dob" placeholder="Enter Date of Birth" />
 									</div> 
                                     <div class="mb-3">
-										<label class="form-label">Gender</label>
-										<input class="form-control form-control-lg" type="text" name="gender" id="gender" placeholder="Enter Employee Gender" />
+										<label class="form-label">Gender</label> 
+										<select class="form-control form-control-lg" name="gender" id="gender"> 
+											<option value="M">Male</option>
+											<option value="F">Female</option> 
+									   </select>
 									</div> 
                                     <div class="mb-3">
 										<label class="form-label">Maritial  Status</label>
@@ -53,15 +53,7 @@
                                     <div class="mb-3">
 										<label class="form-label">Mobile Number</label>
 										<input class="form-control form-control-lg" type="text" name="mobile" id="mobile" placeholder="Enter Mobile Number" />
-									</div> 
-                                    <div class="mb-3">
-										<label class="form-label">Telephone Number</label>
-										<input class="form-control form-control-lg" type="text" name="telephone" id="telephone" placeholder="Enter Telephone Number" />
-									</div> 
-                                    <div class="mb-3">
-										<label class="form-label">Email</label>
-										<input class="form-control form-control-lg" type="text" name="email" id="email" placeholder="Enter Employee Email" />
-									</div> 
+									</div>  
                                     <div class="text-center m-4">
 										<h1 class="h4">Bank Details (To remit the salary)</h1>  
 									</div>
@@ -87,28 +79,27 @@
 									</div> 
                                     <div class="mb-3">
 										<label class="form-label">Date of Appointment</label>
-										<input class="form-control form-control-lg" type="text" name="appointmentDate" id="appointmentDate" placeholder="Enter Date of Appointment" />
+										<input class="form-control form-control-lg" type="date" name="appointmentDate" id="appointmentDate" placeholder="Enter Date of Appointment" />
 									</div>
                                     <div class="mb-3">
-										<label class="form-label">Job Title</label>
-										<input class="form-control form-control-lg" type="text" name="job" id="job" placeholder="Enter Job Title" />
+										<label class="form-label">Job Title</label> 
+										<select class="form-control form-control-lg" name="job" id="job"> 
+											{% for role in roles %}
+											<option value="{{role.id}}">{{role.name}}</option> 
+											{% endfor %}
+									   </select>
 									</div>
                                     <div class="mb-3">
 										<label class="form-label">Basic Salary</label>
-										<input class="form-control form-control-lg" type="text" name="basicSalary" id="basicSalary" placeholder="Enter Basic Salary" />
+										<input class="form-control form-control-lg" type="number" name="basicSalary" id="basicSalary" placeholder="Enter Basic Salary" />
 									</div>
                                     <div class="mb-3">
 										<label class="form-label">Allowances</label>
-										<input class="form-control form-control-lg" type="text" name="allowance" id="allowance" placeholder="Enter Allowance" />
-									</div>
-                                    <div class="mb-3">
-										<label class="form-label">Reason for Allowances</label>
-										<input class="form-control form-control-lg" type="text" name="allowanceReason" id="allowanceReason" placeholder="Enter Allowance Reason" />
-									</div>
-                                    <div class="text-center mt-3"> 
-										<button class="btn btn-primary w-100" onclick="createInvoice()" id="submitInvoice">Create Invoice</button> 
+										<input class="form-control form-control-lg" type="number" name="allowance" id="allowance" placeholder="Enter Allowance" />
 									</div> 
-								<!-- </form> -->
+                                    <div class="text-center mt-3"> 
+										<button class="btn btn-primary w-100" onclick="createEmployee()" id="submitInvoice">Create Employee</button> 
+									</div>  
 							</div>
 						</div>
 					</div>
@@ -118,92 +109,47 @@
 		</div>
 	</div>
 </main> 
-<script>
-	$('#formVaildation').hide();
-	var items = 1;
-	var totalItems = 0;
-	var options = '<option value="0">Select Product</option>';
-	{% for product in products %}
-		totalItems +=1;
-		options +=	'<option value="{{product.id}}">{{product.name}} - {{product.available_qty}} kg</option>';
-	{% endfor %}
-	$('.product').change(updateOptions)
-	function addItem(){
-		if(totalItems > items){
-			items += 1;
-			row = '';
-			row +='<div class="mb-3 row">';
-			row +='<div class="col-6">';
-			row +='<label class="form-label">Product</label>';
-			row +='<select class="form-control form-control-lg product" name="product'+items+'" id="product'+items+'">'; 
-			row += options; 
-			row +='</select>';
-			row +='</div>';
-			row +='<div class="col-3">';
-			row +='<label class="form-label">Qty</label>';
-			row +='<input class="form-control form-control-lg" type="number" name="qty" id="product'+items+'Qty" />';
-			row +='</div>';
-			row +='<div class="col-3">';
-			row +='<label class="form-label">Unit Price</label>'; 
-			row +='<input class="form-control form-control-lg" type="number" name="price" id="product'+items+'Price" />';
-			row +='</div>';
-			row +='</div>';
+<script> 
+	function createEmployee(){ 
+		var name = $('#name').val();
+		var nic = $('#nic').val();  
+		var dob = $('#dob').val();  
+		var gender = $('#gender').val();  
+		var status = $('#status').val(); 
+		var image = $('#image')[0].files[0];
+		var address = $('#address').val();
+		var mobile = $('#mobile').val();
+		var bank = $('#bank').val(); 
+		var branch= $('#branch').val(); 
+		var account = $('#account').val();
+		var epf = $('#epf').val();  
+		var appointmentDate = $('#appointmentDate').val(); 
+		var job = $("#job").val();
+		var basicSalary = $("#basicSalary").val();
+		var allowance = $("#allowance").val();
 
-			$( "#items" ).append(row);
-			updateOptions();
-		}
-	}
-	function updateOptions(){
-		itemsVal = []; 
-		for (let i = 0; i < items; i++) {
-			let id = '#product'+(i+1);
-			itemsVal[i] = $(id).val(); 
-		} 
-		$('.product').html(options); 
-		for(let i = 0; i < items; i++){ 
-			let id = '#product'+(i+1); 
-			$(id).val(itemsVal[i]);
-			itemsVal.forEach(element => {   
-				if(itemsVal[i] != element && element != 0){   
-					ele = id + " option[value='"+element+"']"; 
-					$(ele).remove();
-				} 
-			});
-		} 
-		$('.product').change(updateOptions)
-	}
-	function createInvoice(){
+		if(name!='' && nic!='' && dob!='' && status!='' && image!='' && address!='' && mobile!='' && bank!='' && branch!='' && account!='' && epf!='' && appointmentDate!='' && basicSalary!='' && allowance!='')
+
 		var fd = new FormData();
-		var date = $('#date').val();
-		var supplier = $('#supplier').val();
-		var itemsArray = [];
-		var itemCount = 0;
-		var totalPrice = 0;
-		var image = $('#image')[0].files[0];;
-		for(let i = 0; i < items; i++){
-			let id = '#product'+(i+1); 
-			let idQty = '#product'+(i+1)+'Qty'; 
-			let idPrice = '#product'+(i+1)+'Price'; 
-			let item = $(id).val();
-			let itemQty = $(idQty).val();
-			let itemPrice = $(idPrice).val();
-			if (item != 0 && itemQty != '' && itemPrice != ''){
-				let itemObj = {id:item,qty:itemQty,price:itemPrice};
-				itemCount += 1;
-				itemTotal = itemQty*itemPrice;
-				totalPrice += itemTotal;
-				itemsArray.push(itemObj);
-			}
-		}
-
-		fd.append('date',date); 
-		fd.append('supplier',supplier); 
-		fd.append('count',itemCount); 
-		fd.append('total',totalPrice); 
-		fd.append('items',JSON.stringify(itemsArray)); 
+		fd.append('name',name); 
+		fd.append('nic',nic); 
+		fd.append('dob',dob); 
+		fd.append('status',status); 
+		fd.append('gender',gender); 
 		fd.append('image',image); 
+		fd.append('address',address); 
+		fd.append('mobile',mobile); 
+		fd.append('bank',bank); 
+		fd.append('branch',branch); 
+		fd.append('account',account); 
+		fd.append('epf',epf); 
+		fd.append('appointmentDate',appointmentDate); 
+		fd.append('job',job); 
+		fd.append('basicSalary',basicSalary); 
+		fd.append('allowance',allowance); 
+
 		$.ajax({
-			url:"api/insert-import-invoice",
+			url:"api/v1/insert-employee",
 			type:"POST",
 			headers:{
 				"X-CSRFToken":'{{csrf_token}}'
@@ -213,8 +159,8 @@
 			contentType: false,
 			dataType: "json",
 			processData: false,
-			success:function(response){  
-				window.location = response.url;
+			success:function(response){   
+				console.log('success')
 			}
 		})
 	}

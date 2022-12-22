@@ -10,7 +10,7 @@
 			<main class="content">
 				<div class="container-fluid p-0">
 
-					<h1 class="h3 mb-3"><strong>Employees Personal Info</strong></h1>
+					<h1 class="h3 mb-3"><strong>Employees Payroll Info</strong></h1>
 
 					<div class="row">
 						<div class="card">
@@ -40,15 +40,17 @@
 								<table class="table table-hover my-0" id="tableData">
 									<thead>
 										<tr>
-											<th>Id</th>
-											<th class='ignore'>Image</th>
+											<th>Id</th> 
 											<th>Name</th> 
 											<th>Job Role</th>
-											<th>Nic</th>
-											<th>Date of Birth</th> 
-											<th>Gender</th> 
-											<th>Maritial Status</th> 
-										</tr>
+											<th>Joined Date</th>
+											<th>EPF</th>
+											<th>Basic Salary</th>
+											<th>Allowance</th>  
+											<th>Name</th>
+											<th>Branch</th>
+											<th>Account</th>
+										</tr> 
 									</thead>
 									<tbody id="tableBody"> 
 									</tbody>
@@ -79,7 +81,7 @@
 			$('#tableData').DataTable().destroy();
 			role = $("#role").val()
 			$.ajax({
-				url: "api/v1/employees",
+				url: "api/v1/employees-payroll",
 				type: "GET", 
 				data:{
 					role:role
@@ -94,14 +96,16 @@
 					response.data.forEach(addRow);
 					function addRow(item) {  
 						rows += "<tr>";
-							rows += "<td>" + item.id + "</td>";
-							rows += "<td class='ignore'> <img src='"+item.image+"' id='modelImage' class='img-fluid' width='100%'' alt='Import image'></td>";
+							rows += "<td>" + item.id + "</td>"; 
 							rows += "<td>" + item.name + "</td>";
 							rows += "<td>" + item.role__name + "</td>";
-							rows += "<td>" + item.nic + "</td>"; 
-							rows += "<td>" + item.date_of_birth + "</td>";
-							rows += "<td>" + item.gender + "</td>"; 
-							rows += "<td>" + item.maritial_status + "</td>"; 
+							rows += "<td>" + item.employeepayrollinfo__joined_date + "</td>"; 
+							rows += "<td>" + item.employeepayrollinfo__epf_number + "</td>";
+							rows += "<td>" + item.employeepayrollinfo__basic_salary + "</td>"; 
+							rows += "<td>" + item.employeepayrollinfo__allowance + "</td>"; 
+							rows += "<td>" + item.employeebankaccount__bank + "</td>";
+							rows += "<td>" + item.employeebankaccount__branch + "</td>"; 
+							rows += "<td>" + item.employeebankaccount__account_number + "</td>"; 
 						rows += "</tr>";
 					}
 					$('#tableBody').html(rows); 
@@ -111,10 +115,10 @@
 			});
 		}
 		function exportExcel(){
-			$("#tableData").tableHTMLExport({type:'csv',filename:'employees.csv',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
+			$("#tableData").tableHTMLExport({type:'csv',filename:'employees_payroll.csv',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
 		function exportPDF(){
-			$("#tableData").tableHTMLExport({type:'pdf',filename:'employees.pdf',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'employees_payroll.pdf',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
 	</script>
 {% endblock %}

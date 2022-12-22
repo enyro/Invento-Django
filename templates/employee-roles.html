@@ -1,0 +1,157 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Employee Roles</strong></h1>
+					<div style="text-align: right;" class="mb-2">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+							Create New Role
+						</button>
+					</div>
+ 
+					<div class="row" id="table">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill p-3"> 
+								<div class="table-responsive">
+								<table class="table table-hover my-0" id="tableData">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Name</th>  
+										</tr>
+									</thead>
+									<tbody id="tableBody"> 
+									</tbody>
+								</table>
+								</div>
+							</div>
+						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div> 
+	<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="staticBackdropLabel">Create New Role</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body"> 
+					<div class="row">
+						<div class="col-md-12"> 
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alert-danger"> 
+								</div>  
+								<div class="alert alert-success" id="alert-success">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Role Name</label> 
+						<input class="form-control form-control-lg" type="text" id="name" name="name" placeholder="Enter role name" />
+					</div>   
+					<div class="text-center mt-3"> 
+						<button class="btn btn-primary w-100" onclick="createRole()">Create Role</button> 
+					</div>  
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){ 
+			$("#collapseEmployees").collapse()
+			$("#alert-danger").hide();
+			$("#alert-success").hide(); 
+			getRoles();
+		})
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'employee_roles.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'employee_roles.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+		}
+		function getRoles(){
+			$("#table").hide(); 
+			$('#tableData').DataTable().destroy();
+			$.ajax({
+				url: "api/v1/roles",
+				type: "GET", 
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				}, 
+				mode: "same-origin",
+				success: function (response) {
+					rows = '';
+					
+					response.data.forEach(addRow);
+					function addRow(item) {  
+						rows += "<tr>";
+							rows += "<td>" + item.id + "</td>";
+							rows += "<td>" + item.name + "</td>"; 
+						rows += "</tr>";
+					}
+					$('#tableBody').html(rows);
+					$('#tableData').DataTable();
+					$("#table").show();
+				}
+			});
+		}
+		function createRole(){
+			$("#alert-danger").hide();
+			$("#alert-success").hide();
+			name = $("#name").val(); 
+
+			if(name != ""){ 
+				$.ajax({
+					url: "api/v1/create-role",
+					type: "POST",
+					headers: {
+						"X-CSRFToken": '{{csrf_token}}'
+					},
+					data: {
+						name: name  
+					},
+					dataType: "json",
+					success: function (response) { 
+						if (response.id == 200) {
+							$("#alert-success").html(response.data);
+							$('#alert-success').show();
+							getRoles()
+						} else {
+							$("#alert-danger").html(response.data);
+							$('#alert-danger').show();
+						}
+					},
+					error: function (response) {
+						$("#alert-danger").html("Something went wrong!!");
+					}
+				}); 
+			}else{
+				$("#alert-danger").html("Please enter all the required fields!!");
+				$('#alert-danger').show();
+			}
+			
+		}
+	</script>
+{% endblock %}
