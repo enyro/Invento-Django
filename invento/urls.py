@@ -26,4 +26,5 @@ urlpatterns = [
     path('',include('customers.urls')),
     path('',include('utilities.urls')),
     path('',include('accounts.urls')),
+    path('',include('cheques.urls')),
 ]

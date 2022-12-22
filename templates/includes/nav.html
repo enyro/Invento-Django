@@ -127,9 +127,27 @@
                     </a>
                 </li>
             </div>  
+
+            <li class="sidebar-item">
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseCheques" aria-expanded="false" aria-controls="collapseCheques"> 
+                    <span class="align-middle">Cheques</span>
+                </a>
+            </li>   
+            <div class="collapse" id="collapseCheques"> 
+                <li class="sidebar-item {% if nbar == 'cheques' %}active{% endif %}">
+                    <a class="sidebar-link" href="/cheques"> 
+                        <span class="align-middle ms-3">Customer Cheques</span>
+                    </a>
+                </li> 
+                <li class="sidebar-item {% if nbar == 'accounts' %}active{% endif %}">
+                    <a class="sidebar-link" href="/accounts"> 
+                        <span class="align-middle ms-3">Accounts</span>
+                    </a>
+                </li> 
+            </div>
             
             <li class="sidebar-item">
-                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseAccounts" aria-expanded="false" aria-controls="collapseAdmin"> 
+                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseAccounts" aria-expanded="false" aria-controls="collapseAccounts"> 
                     <span class="align-middle">Accounts</span>
                 </a>
             </li>   
