@@ -49,6 +49,7 @@
 											<th>Email</th> 
 											<th>Name</th> 
 											<th>Role</th> 
+											<th class="ignore">Actions</th> 
 										</tr>
 									</thead>
 									<tbody id="tableBody"> 
@@ -127,12 +128,106 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="editModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editModelLabel">Edit User</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" >  
+						<div class="row">
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alertEdit"> 
+								</div>  
+								<div class="alert alert-success" id="alertEditSuccess">
+								</div>
+							</div>
+						</div>
+						<input type="text" name="id" id="idEdit"  hidden/>
+						<div class="mb-3">
+							<label class="form-label">Username</label> 
+							<input class="form-control form-control-lg" type="text" name="username" id="usernameEdit" placeholder="Enter username" readonly />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">First Name</label> 
+							<input class="form-control form-control-lg" type="text" name="fname" id="fnameEdit" placeholder="Enter first name" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Last Name</label> 
+							<input class="form-control form-control-lg" type="text" name="lname" id="lnameEdit" placeholder="Enter last name" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Role</label>
+							<select class="form-control form-control-lg" name="role" id="roleEdit">
+								{% for role in roles %}
+								<option value="{{role.id}}">{{role.role}}</option>
+								{% endfor %}
+							</select>
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Email</label> 
+							<input class="form-control form-control-lg" type="email" name="email" id="emailEdit" placeholder="Enter email" />
+						</div> 
+						<div class="text-center mt-3"> 
+							<button class="btn btn-primary w-100" onclick="editUser()">Update User</button> 
+						</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="passwordModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="passwordModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="passwordModelLabel">Reset Password</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body" >  
+						<div class="row">
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alertPassword"> 
+								</div>  
+								<div class="alert alert-success" id="alertPasswordSuccess">
+								</div>
+							</div>
+						</div>
+						<input type="text" name="id" id="idPassword"  hidden/>
+						<div class="mb-3">
+							<label class="form-label">Username</label> 
+							<input class="form-control form-control-lg" type="text" name="username" id="usernamePassword" placeholder="Enter username" readonly />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Password</label> 
+							<input class="form-control form-control-lg" type="password" name="fname" id="passwordPassword" placeholder="Enter password" />
+						</div>
+						<div class="mb-3">
+							<label class="form-label">Re-type password</label> 
+							<input class="form-control form-control-lg" type="password" name="lname" id="repasswordPassword" placeholder="Re-enter password" />
+						</div>  
+						<div class="text-center mt-3"> 
+							<button class="btn btn-primary w-100" onclick="resetPassword()">Reset</button> 
+						</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		$(document).ready(function(){ 
 			$("#collapseAdmin").collapse();
 			$("#alert-danger").hide();
 			$("#alert-success").hide(); 
 			$("#table").hide();
+			$("#alertEdit").hide();
+			$("#alertEditSuccess").hide();
+			$("#alertPassword").hide();
+			$("#alertPasswordSuccess").hide();
 		})
 		function getUsers(){
 			$("#table").hide();
@@ -153,11 +248,15 @@
 					response.data.forEach(addRow);
 					function addRow(item) { 
 						rows += "<tr>";
-							rows += "<td>#000" + item.id + "</td>";
+							rows += "<td>" + item.id + "</td>";
 							rows += "<td>" + item.username + "</td>";
 							rows += "<td>" + item.email + "</td>";
 							rows += "<td>" + item.first_name + " " + item.last_name +  "</td>";
-							rows += "<td>" + item.userrole__role__role + "</td>"; 
+							rows += "<td>" + item.userrole__role__role + "</td>";
+							rows += "<td class='ignore'>"; 
+								rows += "<button type='button' onclick='setEditModel(`"+item.id+"`,`"+item.username+"`,`"+item.email+"`,`"+item.first_name+"`,`"+item.last_name+"`,`"+item.userrole__role__id+"`)' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editModel'> Edit </button> ";
+								rows += "<button type='button' onclick='setPasswordModel(`"+item.id+"`,`"+item.username+"`)' class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#passwordModel'> Reset </button> ";
+							rows +="</td>";
 						rows += "</tr>";
 					}
 					$('#tableBody').html(rows);
@@ -165,6 +264,109 @@
 					$("#table").show();
 				}
 			});
+		}
+		function setEditModel(id,username,email,first,last,role){ 
+			$("#alertEdit").hide();
+			$("#alertEditSuccess").hide();
+			$('#idEdit').val(id);
+			$('#usernameEdit').val(username);
+			$('#emailEdit').val(email);
+			$('#fnameEdit').val(first);
+			$('#lnameEdit').val(last);
+			$('#roleEdit').val(role);
+		}
+		function setPasswordModel(id,username){ 
+			$("#alertPassword").hide();
+			$("#alertPasswordSuccess").hide();
+			$("#alertPassword").hide();
+			$("#alertPasswordSuccess").hide();
+			$('#idPassword').val(id); 
+			$('#usernamePassword').val(username); 
+		}
+		function resetPassword(){
+			$("#alertPassword").hide();
+			$("#alertPasswordSuccess").hide();
+			id = $('#idPassword').val(); 
+			password = $('#passwordPassword').val();
+			repassword = $('#repasswordPassword').val(); 
+
+			if(id != '' && password == repassword){
+				$.ajax({
+					url:"api/v1/admin-reset-password",
+					type:"POST",
+					headers:{
+						"X-CSRFToken":"{{csrf_token}}"
+					},
+					data:{
+						id:id,
+						password:password 
+					},
+					dataType:"json",
+					mode:'same-origin',
+					success:function(response){
+						if(response.id == 200){
+							$("#alertPasswordSuccess").html(response.data);
+							$("#alertPasswordSuccess").show()
+							getUsers();
+						}else{
+							$("#alertPassword").html(response.data);
+							$("#alertPassword").show()
+						}
+					},
+					error:function(response){
+						$("#alertPassword").html("Something went wrong!!");
+						$("#alertPassword").show()
+					}
+				})
+			}else{
+				$("#alertPassword").html("Passwords does not match!!");
+				$("#alertPassword").show()
+			}
+		}
+		function editUser(){
+			$("#alertEdit").hide();
+			$("#alertEditSuccess").hide();
+			id = $('#idEdit').val(); 
+			email = $('#emailEdit').val();
+			fname = $('#fnameEdit').val();
+			lname = $('#lnameEdit').val();
+			role = $('#roleEdit').val();
+
+			if(id != '' && email != '' && fname != '' && lname != '' && role != ''){
+				$.ajax({
+					url:"api/v1/edit-user",
+					type:"POST",
+					headers:{
+						"X-CSRFToken":"{{csrf_token}}"
+					},
+					data:{
+						id:id,
+						email:email,
+						fname:fname,
+						lname:lname,
+						role:role
+					},
+					dataType:"json",
+					mode:'same-origin',
+					success:function(response){
+						if(response.id == 200){
+							$("#alertEditSuccess").html(response.data);
+							$("#alertEditSuccess").show()
+							getUsers();
+						}else{
+							$("#alertEdit").html(response.data);
+							$("#alertEdit").show()
+						}
+					},
+					error:function(response){
+						$("#alertEdit").html("Something went wrong!!");
+						$("#alertEdit").show()
+					}
+				})
+			}else{
+				$("#alertEdit").html("Please enter all the required fields!!");
+				$("#alertEdit").show()
+			}
 		}
 		function createUser(){
 			$("#alert-danger").hide();
@@ -219,11 +421,12 @@
 			}
 			
 		}
+
 		function exportExcel(){
-			$("#tableData").tableHTMLExport({type:'csv',filename:'users.csv',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+			$("#tableData").tableHTMLExport({type:'csv',filename:'users.csv',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
 		function exportPDF(){
-			$("#tableData").tableHTMLExport({type:'pdf',filename:'users.pdf',ignoreColumns:'.acciones,#primero',ignoreRows: '#ultimo'});
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'users.pdf',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
 		}
 	</script>
 {% endblock %}

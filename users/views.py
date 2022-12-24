@@ -49,7 +49,7 @@ def getUsers(request):
             roleFilter = Role.objects.get(id=roleId)
             users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','userrole__role__role').filter(userrole__role=roleFilter)
         else:
-            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','userrole__role__role')
+            users = User.objects.order_by('id').all().values('id', 'username','email','first_name','last_name','userrole__role__role','userrole__role__id')
 
         return JsonResponse({'id': 200, 'data': list(users)})
 
@@ -71,6 +71,7 @@ def create(request):
                 username=username,
                 password=password 
             )
+            create_user.set_password(password)
             create_user.save()
 
             if create_user.id is not None:
@@ -85,3 +86,50 @@ def create(request):
                 return JsonResponse({'id': 400, 'data': "Failed to create!!"})
         else:
             return JsonResponse({'id': 400, 'data': "Username already exists!!"})
+
+def resetPassword(request):
+    return render(request,'reset-password.html',{})
+
+def resetPasswordApi(request):
+    currentPassword = request.POST['current']
+    newPassword = request.POST['new']
+    username = request.user.username
+    if request.user.check_password(currentPassword):
+        request.user.set_password(newPassword)
+        request.user.save()
+        user = authenticate(username=username, password=newPassword)
+        login(request, user)
+        return JsonResponse({'id': 200, 'data': "Password updated successfully!!"})
+    else:
+        return JsonResponse({'id': 400, 'data': "Incorrect current password!!"})
+
+def editUser(request):
+    id = request.POST['id']
+    email = request.POST['email']
+    fname = request.POST['fname']
+    lname = request.POST['lname']
+    roleId = request.POST['role']
+
+    user = User.objects.get(pk=id)
+    user.email = email
+    user.first_name = fname
+    user.last_name = lname
+    user.email = email
+    
+    role = Role.objects.get(pk=roleId)
+    user_role = UserRole.objects.get(user=user)
+    user_role.role = role
+
+    user.save()
+    user_role.save()
+
+    return JsonResponse({'id':200,'data':"User updated successfully!!"})
+
+def resetPasswordAdminApi(request):
+    id = request.POST['id']
+    password = request.POST['password']
+    user = User.objects.get(pk=id)
+    user.set_password(password)
+    user.save()
+
+    return JsonResponse({'id':200,'data':"Password updated successfully!!"})

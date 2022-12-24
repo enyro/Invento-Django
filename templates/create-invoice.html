@@ -27,11 +27,15 @@
 										</div>
 									</div>
 									<div class="mb-3 row">
-										<div class="col-md-6"></div>
 										<div class="col-md-6">
 											<label class="form-label">Date</label> 
 											<input class="form-control form-control-lg" id="date" type="date" name="date" required />
 										</div> 
+										<div class="col-md-6">
+											<label class="form-label">Delivery Date</label> 
+											<input class="form-control form-control-lg" id="deliveryDate" type="date" name="date" required />
+										</div>
+										
 									</div>
 									<div class="mb-3">
 										<label class="form-label">Customer</label>
@@ -140,6 +144,7 @@
 	function createInvoice(){
 		var date = $('#date').val();
 		var customer = $('#customer').val();
+		var deliveryDate = $('#deliveryDate').val();
 		var itemsArray = [];
 		var itemCount = 0;
 		var totalPrice = 0;
@@ -170,6 +175,7 @@
 				customer:customer,
 				count:itemCount,
 				total:totalPrice,
+				deliveryDate:deliveryDate,
 				items:JSON.stringify(itemsArray)
 			},
 			dataType: "json",

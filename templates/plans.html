@@ -1,0 +1,295 @@
+{% extends 'includes/layout.html' %}
+{% load static %}
+{% block content %} 
+	<div class="wrapper">
+		{% include 'includes/nav.html' %}
+
+		<div class="main">
+			{% include 'includes/nav-user.html' %}
+
+			<main class="content">
+				<div class="container-fluid p-0">
+
+					<h1 class="h3 mb-3"><strong>Plans</strong></h1>
+					<div style="text-align: right;" class="mb-2">
+						<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#createModel">
+							Create Plan
+						</button> 
+					</div>
+					<div class="row">
+						<div class="card">
+							<div class="card-body"> 
+									<div class="row"> 
+										<div class="col-12 mb-3">
+											<label class="form-label">Status</label>
+											<select class="form-select form-select-lg" id="status">
+												<option value="-1" selected>All</option>
+												<option value="0">Ongoing</option>
+												<option value="1">Success</option> 
+												<option value="2">Failed</option> 
+												<option value="3">Dropped</option> 
+											</select>
+										</div> 
+									</div> 
+									<div class="row">
+										<div class="col-6 mb-3">
+											<label class="form-label">Start Date</label>
+											<input class="form-control form-control-lg" id="startdate" type="date" name="startdate" placeholder="Enter your username" />
+										</div>
+										<div class="col-6 mb-3">
+											<label class="form-label">End Date</label>
+											<input class="form-control form-control-lg" id="enddate" type="date" name="enddate" placeholder="Enter your password" />
+										</div> 
+									</div> 
+									<div class="text-center mt-3">
+										<button class="btn btn-lg btn-primary" onclick=" gettable()">Generate</button>
+									</div> 
+							</div>
+						</div>
+ 					</div> 
+
+					<div class="row" id="table">
+						<div class="col-12 col-lg-12 col-xxl-12 d-flex">
+							<div class="card flex-fill p-3"> 
+								<div class="table-responsive">
+								<table class="table table-hover my-0" id="tableData">
+									<thead>
+										<tr>
+											<th>Id</th>
+											<th>Name</th>
+											<th>Description</th>
+											<th>Created Date</th>
+											<th>Target Date</th> 
+											<th>Status</th>    
+										</tr>
+									</thead>
+									<tbody id="tableBody"> 
+									</tbody>
+								</table>
+								</div>
+							</div>
+						</div> 
+						<div class="text-end action-buttons">
+							<button class="btn bg-white btn-outline-success btn-light mx-1px text-95" onclick="exportExcel()"><i class="mr-1 fa fa-file-excel-o text-primary-m1 text-120 w-2" style="color: #86bd68"></i> Export</button>
+							<button class="btn bg-white btn-outline-danger btn-light mx-1px text-95" onclick="exportPDF()"><i class="mr-1 fa fa-file-pdf-o text-danger-m1 text-120 w-2" style="color: #dd4949"></i> Export</button>
+						</div>
+					</div>
+
+				</div>
+			</main>
+
+			{% include 'includes/footer.html' %}
+		</div>
+	</div>  
+	<div class="modal fade" id="statusModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="statusModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="statusModelLabel">Update Plan Status</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">  
+					<div class="alert alert-danger mb-3" id="statusAlert" role="alert">
+					</div> 
+					<div class="alert alert-success mb-3" id="statusAlertSuccess" role="alert">
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Id</label> 
+						<input class="form-control form-control-lg" type="text" id="statusId"  disabled/>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Status</label>
+						<select class="form-select form-select-lg" id="statusEdit"> 
+							<option value="0">Ongoing</option> 
+							<option value="1">Success</option>
+							<option value="2">Failed</option>
+							<option value="3">Dropped</option>
+						</select>
+					</div>
+					<div class="text-center mt-3">
+						<button class="btn btn-primary w-100" onclick="updateStatus()">Update Status</button>
+					</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="createModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+		aria-labelledby="createModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="createModelLabel">Create Plan</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">  
+					<div class="alert alert-danger mb-3" id="createAlert" role="alert">
+					</div> 
+					<div class="alert alert-success mb-3" id="createAlertSuccess" role="alert">
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Name</label> 
+						<input class="form-control form-control-lg" type="text" id="name" placeholder="Enter plan name"/>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">Description</label> 
+						<input class="form-control form-control-lg" type="text" id="description" placeholder="Enter plan description"/>
+					</div> 
+					<div class="mb-3">
+						<label class="form-label">Target Date</label> 
+						<input class="form-control form-control-lg" type="date" id="target"/>
+					</div> 
+					<div class="text-center mt-3">
+						<button class="btn btn-primary w-100" onclick="createPlan()">Create Plan</button>
+					</div> 
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
+	<script>
+		$(document).ready(function(){  
+			$("#table").hide();
+			$("#statusAlert").hide(); 
+			$("#statusAlertSuccess").hide();
+			$("#createAlert").hide(); 
+			$("#createAlertSuccess").hide();
+		})
+		function exportExcel(){
+			$("#tableData").tableHTMLExport({type:'csv',filename:'invoices.csv',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
+		}
+		function exportPDF(){
+			$("#tableData").tableHTMLExport({type:'pdf',filename:'invoices.pdf',ignoreColumns:'.ignore',ignoreRows: '.ignore'});
+		}
+		function gettable(){ 
+			status = $("#status").val();
+			startdate = $("#startdate").val();
+			enddate = $("#enddate").val();
+			$('#tableData').DataTable().destroy();
+			$.ajax({
+			url:"api/v1/plans",
+			type:"GET", 
+			data:{	status : status,
+					startdate : startdate,
+					enddate : enddate 
+				  },
+			success: function(response){ 
+				rows = ''; 
+				response.data.forEach(addRow);
+                function addRow(item){
+                    rows += "<tr>";
+					rows += "<td>"+item.id+"</td>";
+					rows += "<td>"+item.name+"</td>";
+					rows += "<td>"+item.description+"</td>";
+					rows += "<td>"+item.created_date+"</td>";
+					rows += "<td>"+item.target_date+"</td>";
+					if(item.status == 0){ 
+						rows +="<td><button type='button' onclick='setStatusModel("+ item.id +",0)' class='btn btn-sm btn-warning' data-bs-toggle='modal' data-bs-target='#statusModel'>Ongoing</button></td>";						
+					}else if(item.status == 1){ 
+						rows += "<td><button type='button' onclick='setStatusModel(" + item.id +",1)' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#statusModel'>Success</button></td>";
+					}else if(item.status == 2){ 
+						rows += "<td><button type='button' onclick='setStatusModel(" + item.id +",2)' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#statusModel'>Failed</button></td>";
+					}else if(item.status == 3){ 
+						rows += "<td><button type='button' onclick='setStatusModel(" + item.id +",3)' class='btn btn-sm btn-primary' data-bs-toggle='modal' data-bs-target='#statusModel'>Dropped</button></td>";
+					} 
+					rows += "</tr>";
+                }
+				$('#tableBody').html(rows);
+				$('#tableData').DataTable();
+				$("#table").show();
+			}
+		});
+		}
+		function getCookie(name) {
+			let cookieValue = null;
+			if (document.cookie && document.cookie !== '') {
+				const cookies = document.cookie.split(';');
+				for (let i = 0; i < cookies.length; i++) {
+					const cookie = cookies[i].trim();
+					// Does this cookie string begin with the name we want?
+					if (cookie.substring(0, name.length + 1) === (name + '=')) {
+						cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+						break;
+					}
+				}
+			}
+			return cookieValue;
+		}
+		function setStatusModel(id,status){
+			$("#statusAlert").hide();
+			$("#statusAlertSuccess").hide();
+			$("#statusId").val(id);
+			$("#statusEdit").val(status);
+		}
+
+		function updateStatus(){
+			$("#statusAlert").hide();
+			$("#statusAlertSuccess").hide();
+
+			id = $("#statusId").val();
+			status = $("#statusEdit").val();
+			$.ajax({
+				url: "/api/v1/update-plan",
+				type: "POST",
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data: {
+					id:id,
+					status:status
+				},
+				dataType: "json",
+				success:function(response){
+					if(response.id == 200){
+						$("#statusAlertSuccess").html(response.data);
+						$("#statusAlertSuccess").show();
+						gettable();
+					}
+				},
+				error:function(error){
+					$("#statusAlert").html("Something went wrong!!");
+					$("#statusAlert").show();
+				}
+			})
+		}
+		function createPlan(){
+			$("#createAlert").hide(); 
+			$("#createAlertSuccess").hide();
+			name = $("#name").val();
+			description = $("#description").val();
+			target = $("#target").val();
+
+			$.ajax({
+				url:'api/v1/create-plan',
+				type: 'post',
+				headers: {
+					"X-CSRFToken":'{{csrf_token}}'
+				},
+				data:{
+					name:name,
+					description:description,
+					target:target
+				},
+				dataType:'json',
+				success:function(response){
+					if(response.id==200){
+						$("#createAlertSuccess").html(response.data);
+						$("#createAlertSuccess").show();	
+					}else{
+						$("#createAlert").html(response.data);
+						$("#createAlert").show();
+					} 
+				},
+				error:function(){
+					$("#createAlert").html("Something went wrong!!");
+					$("#createAlert").show();
+				}
+			})
+		}
+	</script>
+{% endblock %}

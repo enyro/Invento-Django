@@ -49,7 +49,8 @@ INSTALLED_APPS = [
     'utilities',
     'accounts',
     'employees',
-    'cheques'
+    'cheques',
+    'plans'
 ]
 
 MIDDLEWARE = [

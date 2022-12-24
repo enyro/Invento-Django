@@ -71,6 +71,7 @@
 											<th>Customer</th>
 											<th>Items</th>
 											<th>Total</th> 
+											<th>Del. Date</th> 
 											<th>Del. Status</th> 
 											<th>Pay. Status</th>  
 										</tr>
@@ -136,23 +137,23 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">  
-					<div class="alert alert-danger mb-3" id="deliveryAlert" role="alert">
+					<div class="alert alert-danger mb-3" id="paymentAlert" role="alert">
 					</div> 
-					<div class="alert alert-success mb-3" id="deliveryAlertSuccess" role="alert">
+					<div class="alert alert-success mb-3" id="paymentAlertSuccess" role="alert">
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Id</label> 
-						<input class="form-control form-control-lg" type="text" id="deliveryId"  disabled/>
+						<input class="form-control form-control-lg" type="text" id="paymentId"  disabled/>
 					</div>
 					<div class="mb-3">
 						<label class="form-label">Status</label>
-						<select class="form-select form-select-lg" id="deliveryStatus"> 
-							<option value="0">Pending</option> 
-							<option value="1">Delivered</option>
+						<select class="form-select form-select-lg" id="paymentStatus">  
+							<option value="0">Pending</option>
+							<option value="1">Paid</option>
 						</select>
 					</div>
 					<div class="text-center mt-3">
-						<button class="btn btn-primary w-100" onclick="updateDeliveryStatus()">Update Delivery Status</button>
+						<button class="btn btn-primary w-100" onclick="updatePaymentStatus()">Update Delivery Status</button>
 					</div> 
 				</div>
 				<div class="modal-footer">
@@ -195,11 +196,16 @@
 				response.data.forEach(addRow);
                 function addRow(item){
                     rows += "<tr>";
-					rows += "<td>"+item.id+"</td>";
+					rows += "<td onclick='location.href = `/invoice/"+item.id+"`'>"+item.id+"</td>";
 					rows += "<td>"+item.date+"</td>";
 					rows += "<td>"+item.customer__name+"</td>";
 					rows += "<td>"+item.products_count+"</td>";
 					rows += "<td>"+item.total+"</td>";
+					if(item.delivery_date != null){
+						rows += "<td>"+item.delivery_date+"</td>";
+					}else{
+						rows += "<td>-</td>";
+					}
 					if(item.delivery_status == 1){ 
 						rows +="<td><button type='button' onclick='setDeliveryModel("+ item.id +",1)' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#deliveryModel'>Delivered</button></td>";						
 					}else if(item.delivery_status == 0){ 
@@ -207,10 +213,10 @@
 
 					}
 					if(item.payment_status == 1){ 
-						rows += "<td><button type='button' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#paymentModel'>Paid</button></td>";						
+						rows += "<td><button type='button' onclick='setPaymentModel("+ item.id +",1)' class='btn btn-sm btn-success' data-bs-toggle='modal' data-bs-target='#paymentModel'>Paid</button></td>";						
 
 					}else if(item.payment_status == 0){ 
-						rows += "<td><button type='button' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#paymentModel'>Pending</button></td>";	
+						rows += "<td><button type='button' onclick='setPaymentModel("+ item.id +",0)' class='btn btn-sm btn-danger' data-bs-toggle='modal' data-bs-target='#paymentModel'>Pending</button></td>";	
 					} 
 					rows += "</tr>";
                 }
@@ -269,6 +275,43 @@
 				error:function(error){
 					$("#deliveryAlert").html("Something went wrong!!");
 					$("#deliveryAlert").show();
+				}
+			})
+		}
+		function setPaymentModel(id,status){
+			$("#paymentAlert").hide();
+			$("#paymentAlertSuccess").hide();
+			$("#paymentId").val(id);
+			$("#paymentStatus").val(status);
+		}
+
+		function updatePaymentStatus(){
+			$("#paymentAlert").hide();
+			$("#paymentAlertSuccess").hide();
+
+			id = $("#paymentId").val();
+			status = $("#paymentStatus").val();
+			$.ajax({
+				url: "/api/v1/update-invoice-payment",
+				type: "POST",
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data: {
+					id:id,
+					status:status
+				},
+				dataType: "json",
+				success:function(response){
+					if(response.id == 200){
+						$("#paymentAlertSuccess").html(response.data);
+						$("#paymentAlertSuccess").show();
+						gettable();
+					}
+				},
+				error:function(error){
+					$("#paymentAlert").html("Something went wrong!!");
+					$("#paymentAlert").show();
 				}
 			})
 		}

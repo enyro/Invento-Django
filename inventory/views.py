@@ -26,7 +26,7 @@ def invoice_data(request):
     startdate = request.GET['startdate']
     enddate = request.GET['enddate'] 
     
-    obj = Invoice.objects.all().values('id','date','products_count','total','delivery_status','payment_status','customer__name')
+    obj = Invoice.objects.all().values('id','date','products_count','total','delivery_status','payment_status','customer__name','delivery_date')
     
     if delivery_status > -1 :
         obj = obj.filter(delivery_status=delivery_status)
@@ -58,6 +58,7 @@ def insert_invoice(request):
         customer_id = request.POST['customer']
         count = request.POST['count']
         total = request.POST['total']
+        deliveryDate = request.POST['deliveryDate']
         customer_data = Customer.objects.get(id=customer_id)
         invoice_data = Invoice(
             date = date,
@@ -65,7 +66,8 @@ def insert_invoice(request):
             products_count = count,
             total = total,
             delivery_status = 0,
-            payment_status = 0
+            payment_status = 0,
+            delivery_date = deliveryDate
         ) 
         invoice_data.save()
         items = json.loads(request.POST['items'])
@@ -217,3 +219,22 @@ def insert_product(request):
     )
     product.save()
     return JsonResponse({'id':200 , 'data':"Product created successfully!!"})
+
+def editProduct(request):
+    id = request.POST['id']
+    status = request.POST['status']
+
+    product =Product.objects.get(pk=id)
+    product.status = status
+    product.save()
+    return JsonResponse({'id':200 , 'data':"Product updated successfully!!"})
+
+def update_invoice_payment(request):
+    invoice_id = request.POST['id']
+    invoice_payment_status = request.POST['status']
+
+    invoice_update = Invoice.objects.get(id=invoice_id)
+    invoice_update.payment_status = invoice_payment_status
+    invoice_update.save()
+
+    return JsonResponse({'id':200 , 'data':"Payment status updated successfully!!"})

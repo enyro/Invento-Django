@@ -1,5 +1,7 @@
 from django.shortcuts import render,redirect
-from inventory.models import Product
+from inventory.models import Product,InvoiceProduct,Invoice
+from django.utils import timezone
+
 # Create your views here.
 
 def home(request):
@@ -19,6 +21,8 @@ def home(request):
 
         if user.userrole.role.role == 'Store Keeper' or user.userrole.role.role == 'Admin':
             products = Product.objects.all().filter(status=1)
-            return render(request,'dashboard-store.html',{'nbar': 'dashboard','products':products}) 
+            date = timezone.now()
+            loads = InvoiceProduct.objects.all().filter(invoice__delivery_date__gte=date)
+            return render(request,'dashboard-store.html',{'nbar': 'dashboard','products':products,'loads':loads}) 
     return redirect('signin')
 

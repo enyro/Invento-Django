@@ -16,6 +16,7 @@ class Invoice(models.Model):
     total = models.IntegerField()
     delivery_status = models.SmallIntegerField()
     payment_status = models.SmallIntegerField()
+    delivery_date = models.DateField(null=True)
 
 class InvoiceProduct(models.Model):
     invoice = models.ForeignKey(Invoice, on_delete=models.CASCADE)
@@ -33,6 +34,7 @@ class ImportInvoice(models.Model):
     payment_status = models.SmallIntegerField(default=0)
     status = models.SmallIntegerField(default=0)
     invoice_image = models.ImageField(upload_to='static/img/invoices/',default='static/img/invoices/default.jpg')
+    arrival_date = models.DateField(null=True)
 
 class ImportProduct(models.Model):
     invoice = models.ForeignKey(ImportInvoice, on_delete=models.CASCADE)

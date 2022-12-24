@@ -20,5 +20,7 @@ urlpatterns = [
     path('api/v1/insert-import-invoice',views.insert_import_invoice,name='insert_import_invoice'),
     path('api/v1/update-invoice-delivery',views.update_invoice_delivery,name='update_invoice_delivery'),
     path('api/v1/products', views.products_data, name='products_data'),
-    path('api/v1/create-product',views.insert_product, name='insert_product')
+    path('api/v1/create-product',views.insert_product, name='insert_product'),
+    path('api/v1/edit-product',views.editProduct,name='edit-product'),
+    path('api/v1/update-invoice-payment',views.update_invoice_payment,name='update_invoice_payment')
 ]

@@ -144,11 +144,53 @@
 			</div>
 		</div>
 	</div>
+	<div class="modal fade" id="editModel" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="editModelLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editModelLabel">Edit Product Status</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body"> 
+					<div class="row">
+						<div class="col-md-12"> 
+							<div class="col-md-12"> 
+								<div class="alert alert-danger" id="alertEdit"> 
+								</div>  
+								<div class="alert alert-success" id="alertEditSuccess">
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="mb-3">
+						<label class="form-label">ID</label> 
+						<input class="form-control form-control-lg" type="text" name="idEdit" id="idEdit" readonly />
+					</div>   
+					<div class="mb-3">
+						<label class="form-label">ID</label> 
+						<select class="form-control form-control-lg" name="statusEdit" id="statusEdit"> 
+							<option value="1">Active</option> 
+							<option value="0">In-Active</option> 
+							<option value="2">Freezed</option> 
+						</select>
+					</div>   
+					<div class="text-center mt-3"> 
+						<button class="btn btn-primary w-100" onclick="editProduct()">Update Product</button> 
+					</div>  
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button> 
+				</div>
+			</div>
+		</div>
+	</div>
 	<script>
 		$(document).ready(function(){ 
 			$("#collapseInventory").collapse()
 			$("#alert-danger").hide();
 			$("#alert-success").hide(); 
+			$("#alertEditSuccess").hide();
+			$("#alertEdit").hide();
 			getProducts();
 		})
 		function exportExcel(){
@@ -177,13 +219,15 @@
 							rows += "<td>" + item.name + "</td>";
 							rows += "<td>" + item.available_qty + " kg</td>";
 							rows += "<td>" + item.pending_qty + " kg</td>"; 
+							rows += "<td>";
 							if(item.status == 1){ 
-								rows +="<td><span class='badge bg-success'>Active</span></td>";						
+								rows +="<button type='button' onclick='setEditModel(`"+item.id+"`,`"+item.status +"`)' class='btn btn-success btn-sm' data-bs-toggle='modal' data-bs-target='#editModel'> Active </button>";						
 							}else if(item.status == 0){ 
-								rows += "<td><span class='badge bg-danger'>In-Active</span></td> ";
+								rows += "<button type='button' onclick='setEditModel(`"+item.id+"`,`"+item.status +"`)' class='btn btn-danger btn-sm' data-bs-toggle='modal' data-bs-target='#editModel'> In-Active </button> ";
 							}else if(item.status == 2){ 
-								rows += "<td><span class='badge bg-warning'>Freezed</span></td> ";
+								rows += "<button type='button' onclick='setEditModel(`"+item.id+"`,`"+item.status +"`)' class='btn btn-warning btn-sm' data-bs-toggle='modal' data-bs-target='#editModel'> Freezed </button> ";
 							}
+							rows += "</td>"
 						rows += "</tr>";
 					}
 					$('#tableBody').html(rows);
@@ -191,6 +235,46 @@
 					$("#table").show();
 				}
 			});
+		}
+		function setEditModel(id,status){
+			$("#alertEditSuccess").hide();
+			$("#alertEdit").hide();
+
+			$("#idEdit").val(id);
+			$("#statusEdit").val(status);
+		}
+		function editProduct(){
+			$("#alertEditSuccess").hide();
+			$("#alertEdit").hide();
+			id = $("#idEdit").val();
+			status = $("#statusEdit").val();
+			$.ajax({
+				url: "api/v1/edit-product",
+				type: "POST",
+				headers: {
+					"X-CSRFToken": '{{csrf_token}}'
+				},
+				data: {
+					id: id,
+					status:status 
+				},
+				dataType: "json",
+				success: function (response) { 
+					if (response.id == 200) {
+						$("#alertEditSuccess").html(response.data);
+						$('#alertEditSuccess').show();
+						getProducts()
+					} else {
+						$("#alertEdit").html(response.data);
+						$('#alertEdit').show();
+					}
+				},
+				error: function (response) {
+					$("#alertEdit").html("Something went wrong!!");
+					$('#alertEdit').show();
+				}
+			}); 
+
 		}
 		function createProduct(){
 			$("#alert-danger").hide();
@@ -220,6 +304,7 @@
 					},
 					error: function (response) {
 						$("#alert-danger").html("Something went wrong!!");
+						$('#alert-danger').show();
 					}
 				}); 
 			}else{
