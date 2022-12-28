@@ -48,3 +48,52 @@ class EmployeeLog(models.Model):
     task = models.TextField()
     user = models.ForeignKey(User, on_delete=models.DO_NOTHING)
     date = models.DateTimeField(default=timezone.now) 
+
+class Leave(models.Model):
+    name = models.TextField()
+    monthly = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+    annually = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+
+class EmployeeLeaveBalance(models.Model):
+    employee = models.OneToOneField(Employee, on_delete=models.CASCADE,primary_key=True)
+    casual = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+    annual = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+    medical = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+
+class EmployeeLeave(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING)
+    Leave = models.ForeignKey(Leave,on_delete=models.DO_NOTHING)
+    date = models.DateField()
+    days = models.DecimalField(max_digits=2,decimal_places=1,default=0)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True) 
+    created_at = models.DateTimeField(default=timezone.now)
+
+class Payroll(models.Model):
+    date = models.DateField()
+    basic_salary = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    no_pay = models.DecimalField(max_digits=7,decimal_places=2,default=0,null=True)
+    epf_liable_salary = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    taxable_salary = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    epf_deduction = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    advance_deduction = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    total_deduction = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    allowance = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    net_salary = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    contribution_12 = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    contribution_3 = models.DecimalField(max_digits=7,decimal_places=2,null=True)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True) 
+    created_at = models.DateTimeField(default=timezone.now)
+
+class Payslip(models.Model):
+    employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING)
+    basic_salary = models.DecimalField(max_digits=7,decimal_places=2)
+    no_pay = models.DecimalField(max_digits=7,decimal_places=2,default=0)
+    epf_liable_salary = models.DecimalField(max_digits=7,decimal_places=2)
+    taxable_salary = models.DecimalField(max_digits=7,decimal_places=2)
+    epf_deduction = models.DecimalField(max_digits=7,decimal_places=2)
+    advance_deduction = models.DecimalField(max_digits=7,decimal_places=2)
+    total_deduction = models.DecimalField(max_digits=7,decimal_places=2)
+    allowance = models.DecimalField(max_digits=7,decimal_places=2)
+    net_salary = models.DecimalField(max_digits=7,decimal_places=2)
+    contribution_12 = models.DecimalField(max_digits=7,decimal_places=2)
+    contribution_3 = models.DecimalField(max_digits=7,decimal_places=2)
