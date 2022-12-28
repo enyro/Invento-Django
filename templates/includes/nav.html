@@ -58,41 +58,16 @@
                     </a>
                 </li>
             </div>  
-            <li class="sidebar-item">
-                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseSuppliers" aria-expanded="false" aria-controls="collapseSuppliers"> 
+            <li class="sidebar-item {% if nbar == 'suppliers' %}active{% endif %}">
+                <a class="sidebar-link" href="/suppliers"> 
                     <span class="align-middle">Suppliers</span>
                 </a>
-            </li>
-            <div class="collapse" id="collapseSuppliers"> 
-                <li class="sidebar-item {% if nbar == 'suppliers' %}active{% endif %}">
-                    <a class="sidebar-link" href="/suppliers"> 
-                        <span class="align-middle ms-3">Suppliers</span>
-                    </a>
-                </li>
-                <li class="sidebar-item {% if nbar == 'suppliers-payments' %}active{% endif %}">
-                    <a class="sidebar-link" href="/suppliers-payments"> 
-                        <span class="align-middle ms-3">Suppliers Payments</span>
-                    </a>
-                </li>
-            </div>  
-
-            <li class="sidebar-item">
-                <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseCustomers" aria-expanded="false" aria-controls="collapseCustomers"> 
+            </li>    
+            <li class="sidebar-item {% if nbar == 'customers' %}active{% endif %}">
+                <a class="sidebar-link" href="/customers"> 
                     <span class="align-middle">Customers</span>
                 </a>
-            </li>
-            <div class="collapse" id="collapseCustomers"> 
-                <li class="sidebar-item {% if nbar == 'customers' %}active{% endif %}">
-                    <a class="sidebar-link" href="/customers"> 
-                        <span class="align-middle ms-3">Customers</span>
-                    </a>
-                </li>
-                <li class="sidebar-item {% if nbar == 'customers-payments' %}active{% endif %}">
-                    <a class="sidebar-link" href="/customers-payments"> 
-                        <span class="align-middle ms-3">Customer Payments</span>
-                    </a>
-                </li>
-            </div>  
+            </li>   
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseUtility" aria-expanded="false" aria-controls="collapseAdmin"> 
                     <span class="align-middle">Utilities</span>

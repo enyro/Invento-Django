@@ -26,11 +26,14 @@
 											</div>   
 										</div>
 									</div>
-									<div class="mb-3 row">
-										<div class="col-md-6"></div>
+									<div class="mb-3 row"> 
 										<div class="col-md-6">
 											<label class="form-label">Date</label> 
 											<input class="form-control form-control-lg" id="date" type="date" name="date" required />
+										</div> 
+										<div class="col-md-6">
+											<label class="form-label">Arrival Date</label> 
+											<input class="form-control form-control-lg" id="arrivalDate" type="date" name="date" required />
 										</div> 
 									</div>
 									<div class="mb-3">
@@ -145,6 +148,7 @@
 		var fd = new FormData();
 		var date = $('#date').val();
 		var supplier = $('#supplier').val();
+		var arrivalDate = $('#arrivalDate').val();
 		var itemsArray = [];
 		var itemCount = 0;
 		var totalPrice = 0;
@@ -170,7 +174,8 @@
 		fd.append('count',itemCount); 
 		fd.append('total',totalPrice); 
 		fd.append('items',JSON.stringify(itemsArray)); 
-		fd.append('image',image); 
+		fd.append('image',image);
+		fd.append('arrivalDate',arrivalDate) 
 		$.ajax({
 			url:"api/v1/insert-import-invoice",
 			type:"POST",

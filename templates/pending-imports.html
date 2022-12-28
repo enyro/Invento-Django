@@ -60,9 +60,10 @@
                 <div class="col-12">
                     <img src="" id="modelImage" class="img-fluid" width="100%" alt="Import image">
                 </div>
-                <div class="alert alert-danger mb-3" id="deliveryAlert" role="alert">
+                <br />
+                <div class="alert alert-danger mb-3" id="alert" role="alert">
                 </div>
-                <div class="alert alert-success mb-3" id="deliveryAlertSuccess" role="alert">
+                <div class="alert alert-success mb-3" id="alertSuccess" role="alert">
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Id</label>
@@ -70,14 +71,14 @@
                 </div>
                 <div class="mb-3">
                     <label class="form-label">Status</label>
-                    <select class="form-select form-select-lg" id="deliveryStatus">
+                    <select class="form-select form-select-lg" id="status">
                         <option value="0">Pending</option>
-                        <option value="1">Delivered</option>
+                        <option value="1">Accepted</option>
+                        <option value="2">Rejected</option>
                     </select>
                 </div>
                 <div class="text-center mt-3">
-                    <button class="btn btn-primary w-100" onclick="updateDeliveryStatus()">Update Delivery
-                        Status</button>
+                    <button class="btn btn-primary w-100" onclick="updateStatus()">Update Status</button>
                 </div>
             </div>
             <div class="modal-footer">
@@ -90,8 +91,8 @@
     $(document).ready(function () {
         $("#collapseImports").collapse();
         $("#table").hide(); 
-        $("#deliveryAlert").hide();
-        $("#deliveryAlertSuccess").hide();
+        $("#alert").hide();
+        $("#alertSuccess").hide();
         gettable();
     })
     function gettable() {
@@ -112,7 +113,7 @@
                 response.data.forEach(addRow);
                 function addRow(item) {
                     console.log(item.invoice_image)
-                    rows += "<tr onclick='displayModel("+item.id+",`"+item.invoice_image +"`)' data-bs-toggle='modal' data-bs-target='#detailModel'>";
+                    rows += "<tr onclick='displayModel("+item.id+",`"+item.invoice_image +"`,`"+item.status+"`)' data-bs-toggle='modal' data-bs-target='#detailModel'>";
                     rows += "<td>#000" + item.id + "</td>";
                     rows += "<td>" + item.date + "</td>";
                     rows += "<td>" + item.supplier__name + "</td>";
@@ -147,9 +148,44 @@
     function exportPDF() {
         $("#tableData").tableHTMLExport({ type: 'pdf', filename: 'imports.pdf', ignoreColumns: '.acciones,#primero', ignoreRows: '#ultimo' });
     }
-    function displayModel(id,image){ 
+    function displayModel(id,image,status){ 
+        $("#alert").hide();
+        $("#alertSuccess").hide();
         $('#modelImage').attr('src', image);
         $('#id').val(id);
+        $('#status').val(status);
+    }
+    function updateStatus(){
+        $("#alert").hide();
+        $("#alertSuccess").hide();
+        id = $('#id').val();
+        status = $('#status').val();
+
+        $.ajax({
+            url:'api/v1/update-import-status',
+            type:'POST',
+            headers:{
+                'X-CSRFToken':"{{csrf_token}}"
+            },
+            data:{
+                id:id,
+                status:status
+            },
+            success:function(response){
+                if(response.id == 200){
+                    $("#alertSuccess").html(response.data);
+                    $("#alertSuccess").show();
+                    gettable();
+                }else{
+                    $("#alert").html(response.data);
+                    $("#alert").show();
+                }
+            },
+            error:function(response){
+                $("#alert").html("Something went wrong!!");
+                $("#alert").show();
+            }
+        })
     }
 </script>
 {% endblock %}

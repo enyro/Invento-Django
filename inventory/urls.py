@@ -22,5 +22,6 @@ urlpatterns = [
     path('api/v1/products', views.products_data, name='products_data'),
     path('api/v1/create-product',views.insert_product, name='insert_product'),
     path('api/v1/edit-product',views.editProduct,name='edit-product'),
-    path('api/v1/update-invoice-payment',views.update_invoice_payment,name='update_invoice_payment')
-]
+    path('api/v1/update-invoice-payment',views.update_invoice_payment,name='update_invoice_payment'),
+    path('api/v1/update-import-status',views.updateImportStatus,name='update-import-status')
+] 

@@ -104,7 +104,7 @@ def import_invoice_data(request):
     enddate = request.GET['enddate']
     status = request.GET['status']
     
-    obj = ImportInvoice.objects.all().values('id','date','products_count','total','load_status','payment_status','invoice_image','supplier__name').filter(status=status)
+    obj = ImportInvoice.objects.all().values('id','date','products_count','total','status','load_status','payment_status','invoice_image','supplier__name').filter(status=status)
     
     if load_status > -1 :
         obj = obj.filter(load_status=load_status)
@@ -170,13 +170,15 @@ def insert_import_invoice(request):
         count = request.POST['count']
         total = request.POST['total']
         image = request.FILES['image']
+        arrivalDate = request.POST['arrivalDate']
         supplier_data = Supplier.objects.get(id=supplier_id)
         invoice_data = ImportInvoice(
             date = date,
             supplier = supplier_data,
             products_count = count,
             total = total, 
-            invoice_image = image
+            invoice_image = image,
+            arrival_date = arrivalDate
         ) 
         invoice_data.save()
         items = json.loads(request.POST['items'])
@@ -238,3 +240,13 @@ def update_invoice_payment(request):
     invoice_update.save()
 
     return JsonResponse({'id':200 , 'data':"Payment status updated successfully!!"})
+
+def updateImportStatus(response):
+    id = response.POST['id']
+    status = response.POST['status']
+
+    importInvoice = ImportInvoice.objects.get(pk=id)
+    importInvoice.status = status
+    importInvoice.save()
+
+    return JsonResponse({'id':200,'data':"Status updated successfully!!"})
