@@ -5,7 +5,7 @@ class Product(admin.ModelAdmin):
     list_display = ('id','name','avg_price','available_qty','pending_qty','status')
 
 class Invoice(admin.ModelAdmin):
-    list_display = ('id','date','customer','products_count','total','delivery_status','payment_status')
+    list_display = ('id','date','customer','products_count','total','delivery_status','payment_status','delivery_date')
 
 class InvoiceProduct(admin.ModelAdmin):
     list_display = ('id','invoice','product','unit_price','weight','total')

@@ -12,11 +12,17 @@ class Utility(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
 
 class UtilityInvoice(models.Model):
+    class InvoiceStatus(models.IntegerChoices):
+        PENDING = 0
+        PAID = 1
     Utility = models.ForeignKey(Utility, on_delete=models.CASCADE)
     invoice_number = models.CharField(max_length=50)
     date = models.DateField()
     due_date = models.DateField()
     amount = models.DecimalField(decimal_places=2,max_digits=6)
+    status = models.IntegerField(default=InvoiceStatus.PENDING)
+    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True) 
+    created_at = models.DateTimeField(default=timezone.now)
 
 class UtilityLog(models.Model):
     utility = models.ForeignKey(Utility, on_delete=models.DO_NOTHING)

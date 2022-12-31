@@ -9,6 +9,7 @@
                     <span class="align-middle">Dashboard</span>
                 </a>
             </li>  
+            {% if user.userrole.role.id < 6  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseInventory" aria-expanded="false" aria-controls="collapseInventory"> 
                     <span class="align-middle ">Inventory</span>
@@ -31,6 +32,9 @@
                     </a>
                 </li>
             </div>  
+            {% endif  %}
+
+            {% if user.userrole.role.id < 5  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseImports" aria-expanded="false" aria-controls="collapseImports"> 
                     <span class="align-middle ">Imports</span>
@@ -58,16 +62,22 @@
                     </a>
                 </li>
             </div>  
+            {% endif  %}
+            {% if user.userrole.role.id < 4  %}
             <li class="sidebar-item {% if nbar == 'suppliers' %}active{% endif %}">
                 <a class="sidebar-link" href="/suppliers"> 
                     <span class="align-middle">Suppliers</span>
                 </a>
-            </li>    
+            </li>   
+            {% endif  %} 
+            {% if user.userrole.role.id < 6  %}
             <li class="sidebar-item {% if nbar == 'customers' %}active{% endif %}">
                 <a class="sidebar-link" href="/customers"> 
                     <span class="align-middle">Customers</span>
                 </a>
             </li>   
+            {% endif  %}
+            {% if user.userrole.role.id < 5  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseUtility" aria-expanded="false" aria-controls="collapseAdmin"> 
                     <span class="align-middle">Utilities</span>
@@ -80,6 +90,8 @@
                     </a>
                 </li> 
             </div>
+            {% endif  %}
+            {% if user.userrole.role.id < 5  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseEmployees" aria-expanded="false" aria-controls="collapseEmployees"> 
                     <span class="align-middle">Employees</span>
@@ -102,7 +114,8 @@
                     </a>
                 </li>
             </div>  
-
+            {% endif  %}
+            {% if user.userrole.role.id < 5  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseCheques" aria-expanded="false" aria-controls="collapseCheques"> 
                     <span class="align-middle">Cheques</span>
@@ -120,7 +133,8 @@
                     </a>
                 </li> 
             </div>
-            
+            {% endif  %}
+            {% if user.userrole.role.id < 5  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseAccounts" aria-expanded="false" aria-controls="collapseAccounts"> 
                     <span class="align-middle">Accounts</span>
@@ -138,13 +152,15 @@
                     </a>
                 </li> 
             </div> 
-
+            {% endif  %}
+            {% if user.userrole.role.id < 3  %}
             <li class="sidebar-item {% if nbar == 'plans' %}active{% endif %}">
                 <a class="sidebar-link" href="/plans"> 
                     <span class="align-middle">Plans</span>
                 </a>
             </li>  
-
+            {% endif  %}
+            {% if user.userrole.role.id < 2  %}
             <li class="sidebar-item">
                 <a class="sidebar-link" data-bs-toggle="collapse" href="#collapseAdmin" aria-expanded="false" aria-controls="collapseAdmin"> 
                     <span class="align-middle">Admin</span>
@@ -157,6 +173,7 @@
                     </a>
                 </li> 
             </div>
+            {% endif  %}
         </ul> 
     </div>
 </nav>

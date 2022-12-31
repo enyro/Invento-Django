@@ -80,12 +80,11 @@ class Payroll(models.Model):
     allowance = models.DecimalField(max_digits=7,decimal_places=2,null=True)
     net_salary = models.DecimalField(max_digits=7,decimal_places=2,null=True)
     contribution_12 = models.DecimalField(max_digits=7,decimal_places=2,null=True)
-    contribution_3 = models.DecimalField(max_digits=7,decimal_places=2,null=True)
-    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True) 
-    created_at = models.DateTimeField(default=timezone.now)
+    contribution_3 = models.DecimalField(max_digits=7,decimal_places=2,null=True) 
 
 class Payslip(models.Model):
     employee = models.ForeignKey(Employee, on_delete=models.DO_NOTHING)
+    payroll = models.ForeignKey(Payroll,on_delete=models.CASCADE,null=True)
     basic_salary = models.DecimalField(max_digits=7,decimal_places=2)
     no_pay = models.DecimalField(max_digits=7,decimal_places=2,default=0)
     epf_liable_salary = models.DecimalField(max_digits=7,decimal_places=2)

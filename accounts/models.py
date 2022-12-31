@@ -6,10 +6,8 @@ class Ledger(models.Model):
     name = models.CharField(max_length=100)
 
 class TrialBalance(models.Model):
-    date = models.DateField()
-    total = models.DecimalField(decimal_places=2, max_digits=11)
-    created_by = models.ForeignKey(User, on_delete=models.DO_NOTHING, null=True) 
-    created_at = models.DateTimeField(default=timezone.now)
+    date = models.DateField(default=timezone.now)
+    total = models.DecimalField(decimal_places=2, max_digits=11)  
 
 class TrialBalanceLedger(models.Model):
     trial_balance = models.ForeignKey(TrialBalance, on_delete=models.CASCADE)
