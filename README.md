@@ -22,8 +22,7 @@ Built using **Django** and **PostgreSQL**, Invento follows a modular, API-first 
 | Layer      | Technology         |
 |------------|--------------------|
 | Application    | Django (Python)    |
+| UI    | Bootstrap    |
 | Database   | PostgreSQL         |
-| API Format | REST (Django REST Framework) |
-| Hosting    | (Optional: e.g., Heroku, Railway, Docker) |
 
 ---
